@@ -1,0 +1,22 @@
+language: node_js
+node_js:
+  - "5.6.0"
+dist: trusty
+sudo: false
+branches:
+  only:
+  - master
+cache:
+  directories:
+    - "node_modules"  
+before_install:
+- npm install -g hexo
+- npm install
+before_script:
+- git config --global user.name 'sculove'
+- git config --global user.email 'sculove@gmail.com'
+- sed -i'' "s~git@github.com:sculove/blog.git~https://${GH_TOKEN}:x-oauth-basic@github.com/sculove/blog.git~" _config.yml
+install:
+- hexo generate
+script:
+- hexo deploy
