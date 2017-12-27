@@ -1,14 +1,13 @@
 ---
 title: VSCODE extension 만든 삽질기
 categories:
-  - Tech
+  - null
 tags:
-  - vscode
-  - extension
-  - electron
-  - tsconfig
+  - null
 abbrlink: 4600
+date: 2017-12-27 17:47:32
 ---
+
 
 MS에 기여한게 없어서 뭔가 해봐야겠다는 생각에 
 그동안 만들고 싶었던 vscode extentions을 만들어 봤다.
