@@ -8,7 +8,7 @@
   "scripts": {
     "start": "hexo server",
     "iloft": "hexo new iloft iloft",
-    "deploy": "hexo clean && hexo generate --deploy"
+    "deploy": "hexo clean && hexo generate && hexo deploy"
   },
   "dependencies": {
     "hexo": "^3.4.4",
