@@ -71,7 +71,7 @@ theme: hueman
 
 deploy:
   type: git
-  repo: git@github.com:sculove/blog.git
+  repo: https://__GITHUB_TOKEN__@github.com/sculove/blog.git
   branch: gh-pages
 
 # seo

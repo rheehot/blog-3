@@ -1,21 +1,15 @@
 language: node_js
 node_js:
-  - "6.0.0"
-dist: trusty
-sudo: false
+- 6.0.0
 branches:
   only:
-  - master
-cache:
-  directories:
-    - "node_modules"  
-before_script:
-- git config --global user.name 'sculove'
-- git config --global user.email 'sculove@gmail.com'
-- sed -i '' "s~git@github.com:sculove/blog.git~https://${GH_TOKEN}:x-oauth-basic@github.com/sculove/blog.git~" _config.yml
+  - source
 
-before_install:
-- npm install -g hexo
-- npm install
-install:
-- npm run deploy
+install: npm install
+
+before_script:
+- git config --global user.name "sculove"
+- git config --global user.email "sculove@outlook.com"
+- sed -i "s/__GITHUB_TOKEN__/${__GITHUB_TOKEN__}/" _config.yml
+
+script: npm run build
