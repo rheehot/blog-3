@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - "6.0.0"
+dist: trusty
+sudo: false
+branches:
+  only:
+  - master
+cache:
+  directories:
+    - "node_modules"  
+before_script:
+- git config --global user.name 'sculove'
+- git config --global user.email 'sculove@gmail.com'
+- sed -i "s/__GH_TOKEN__/${GH_TOKEN}/" _config.yml
+install:
+- npm install
+script:
+- npm run deploy
