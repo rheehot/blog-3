@@ -8,7 +8,7 @@ subtitle: 아내와 아들 그리고 딸밖에 모르는 남편
 description: FrontEnd 개발자. JavaScript, RxJS, Angular, React 기술 경험 블로그
 author: sculove
 language: ko
-timezone: Japan
+timezone: Asia/Seoul
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
@@ -33,7 +33,7 @@ default_layout: post
 titlecase: true # Transform title into titlecase
 external_link: true # Open external links in new tab
 filename_case: 0
-render_drafts: true
+render_drafts: false
 post_asset_folder: true
 relative_link: false
 future: true
@@ -71,7 +71,7 @@ theme: hueman
 
 deploy:
   type: git
-  repo: https://github.com/sculove/blog.git
+  repo: https://__GH_TOKEN__@github.com/sculove/blog.git
   branch: gh-pages
 
 # seo
