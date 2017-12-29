@@ -12,8 +12,10 @@ cache:
 before_script:
 - git config --global user.name 'sculove'
 - git config --global user.email 'sculove@gmail.com'
-- sed -i "s/__GH_TOKEN__/${GH_TOKEN}/" _config.yml
-install:
+- sed -i'' "s~git@github.com:sculove/blog.git~https://${GH_TOKEN}:x-oauth-basic@github.com/sculove/blog.git~" _config.yml
+
+before_install:
+- npm install -g hexo
 - npm install
-script:
+install:
 - npm run deploy
