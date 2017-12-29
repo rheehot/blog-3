@@ -31,17 +31,17 @@ date: 2016-07-26 12:10:25
 
 | 구분 | 상세 스펙 | ES6 | Babel Normal mode | Babel Loose mode | 코드 비교 내역 |
 | --------- | --------- | ------------ | ----- | ------ | -------- |
-| 코드 변환 | class     | 81 Bytes | `846 Bytes` | `316 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#1-class) |
-| 코드 변환 | extends   | 38 Bytes | `524 Bytes` | `524 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#2-extends) |
-| 코드 변환 | arrow function   | 19 Bytes | 41 Bytes | 41 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#3-arrow-function) |
-| 코드 변환 | default parameter   | 28 Bytes | 92 Bytes | 92 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#4-default-parameter) |
-| 코드 변환 | spread operator  | 26 Bytes | `220 Bytes` | `32 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#5-spread-operator) |
-| 코드 변환 | let, const | 14 Bytes | 12 Bytes | 12 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#6-let-const) |
-| 코드 변환 | enhanced Object Literals | 27 Bytes | `214 Bytes` | `38 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#7-enhanced-object-literals) |
-| 코드 변환 | template Strings | 64 Bytes | 68 Bytes | 68 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#8-template-strings) |
-| 코드 변환 | destructring | 57 Bytes | 142 Bytes | 142 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#9-destructring) |
-| 코드 변환 + Polyfill | generators | 156 Bytes | `850 Bytes` | `691 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#1-generators) |
-| 코드 변환 + Polyfill | iterator | 164 Bytes | `652 Bytes` | `497 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/#2-iterator) |
+| 코드 변환 | class     | 81 Bytes | `846 Bytes` | `316 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#1-class) |
+| 코드 변환 | extends   | 38 Bytes | `524 Bytes` | `524 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#2-extends) |
+| 코드 변환 | arrow function   | 19 Bytes | 41 Bytes | 41 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#3-arrow-function) |
+| 코드 변환 | default parameter   | 28 Bytes | 92 Bytes | 92 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#4-default-parameter) |
+| 코드 변환 | spread operator  | 26 Bytes | `220 Bytes` | `32 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#5-spread-operator) |
+| 코드 변환 | let, const | 14 Bytes | 12 Bytes | 12 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#6-let-const) |
+| 코드 변환 | enhanced Object Literals | 27 Bytes | `214 Bytes` | `38 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#7-enhanced-object-literals) |
+| 코드 변환 | template Strings | 64 Bytes | 68 Bytes | 68 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#8-template-strings) |
+| 코드 변환 | destructring | 57 Bytes | 142 Bytes | 142 Bytes | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#9-destructring) |
+| 코드 변환 + Polyfill | generators | 156 Bytes | `850 Bytes` | `691 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#1-generators) |
+| 코드 변환 + Polyfill | iterator | 164 Bytes | `652 Bytes` | `497 Bytes` | [변환 전후 상세 코드](https://sculove.github.io/blog/2016/07/26/babel-codes/#2-iterator) |
 | Polyfill | Map/Set/WeakMap/WeakSet, Promise, Reflect, Symbol | N/A | N/A | N/A | N/A  |
 
 
@@ -69,7 +69,7 @@ Babel의 "Loose" 모드일 경우, 개인적으로 읽기 쉬운 코드였으며
 
 > #### 한마디로 정리한다면... 안타깝지만, Babel 은 저 보다 코드를 더 잘짰습니다. ㅠㅠ
 
-상세한 내역은 [코드 변환 전후](https://sculove.github.io/blog/2016/07/26/Babel-%EB%B3%80%ED%99%98%EC%BD%94%EB%93%9C/)의 내역을 확인하기 바랍니다.
+상세한 내역은 [코드 변환 전후](https://sculove.github.io/blog/2016/07/26/babel-codes/)의 내역을 확인하기 바랍니다.
 
 
 > ### ES6 도입을 검토하시는 개발자분들이 있다면, Babel에 의한 코드 변화를 의심하는 것보다, 다른 부분을 검토대상으로 고려하는 게 더 좋을 것 같네요.
