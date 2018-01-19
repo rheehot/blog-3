@@ -8,6 +8,8 @@ title: 외부 발표 및 글 모음
 
 ### Hellow World
 
+#### [[2018.01.03] 카드형 UI와 eg.InfiniteGrid 3.0](http://d2.naver.com/helloworld/0637045)
+
 #### [[2017.08.17] 사용자의 액션에 반응하는 UI 라이브러리, eg.Axes](http://d2.naver.com/helloworld/0590136)
 
 #### [[2016.09.20] 네이버 쇼핑의 새로운 카드형 UI 라이브러리, eg.InfiniteGrid](http://d2.naver.com/helloworld/4874130)

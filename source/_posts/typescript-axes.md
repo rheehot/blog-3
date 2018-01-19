@@ -21,3 +21,6 @@ Typescript는 자바스크립트의 자유로움 속에서 타입의 안정성�
 #### 발표 자료
 {% iframe http://sculove.github.io/slides/typescript_axes/ 100% 500px %}
 자료 : http://sculove.github.io/slides/typescript_axes/
+
+#### 발표한 행사
+Typescript Korea Meetup 2018-1 https://www.tumblbug.com/20180118
