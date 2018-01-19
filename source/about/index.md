@@ -20,9 +20,7 @@ title: 외부 발표 및 글 모음
 
 #### [[2015.02.26] AnguarJS 도입 선택 가이드](http://d2.naver.com/helloworld/1172239)
 
-
 #### [[2014.10.22] 쉽고 빠른 모바일 웹 UI개발 저자 특강](http://d2.naver.com/helloworld/922784)
-
 
 #### [[2014.08.18] Front-end 개발자가 들려주는 개발 이야기](http://d2.naver.com/helloworld/900758)
 
