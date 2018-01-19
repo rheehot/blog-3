@@ -23,5 +23,5 @@ RxJS는 일관된 방식으로 안전하게 데이터 흐름을 처리하는 라
 #### 동영상
 {% youtube 2f09-veX4HA %}
 
-#### 발표한 행사
-FEConf 2017 https://2017.feconf.kr/
+#### 발표한 행사 정보
+[2017.10.21] FEConf 2017 https://2017.feconf.kr/
