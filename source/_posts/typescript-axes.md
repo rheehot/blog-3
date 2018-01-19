@@ -7,11 +7,12 @@ tags:
   - typescript
   - axes
   - egjs
+abbrlink: 26856
 date: 2018-01-18 19:00:00
 ---
 
 ### Typescript로 부터 얻은 것과 잃은 것
-#### eg.Axes 개발 경험기
+#### [eg.Axes](https://github.com/naver/egjs-axes) 개발 경험기
 ![](typescript.png)
 
 Typescript는 자바스크립트의 자유로움 속에서 타입의 안정성을 함께 추구할수 있는 언어입니다.
