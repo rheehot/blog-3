@@ -11,6 +11,9 @@ date: 2015-09-24 17:00:00
 ---
 ### Web Animation API
 https://w3c.github.io/web-animations/
+
+![](CSS-SVG-Web-Animations.png)
+
 Web Animations에 대한 기술 스펙에 대한 발표 자료
 - 발표 URL : https://sculove.github.io/slides/webAnimation/
 
