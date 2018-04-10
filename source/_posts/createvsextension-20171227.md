@@ -1,9 +1,10 @@
 ---
 title: VSCODE extension 만든 삽질기
 categories:
-  - null
+  - Tech
 tags:
-  - null
+  - vscode
+  - extension
 abbrlink: 4600
 date: 2017-12-27 17:47:32
 ---
