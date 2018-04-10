@@ -1,5 +1,6 @@
 ---
 title: advance-react
+abbrlink: 4388
 ---
 
 react는 style을 객체로 받을수 있나?

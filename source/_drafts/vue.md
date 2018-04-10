@@ -1,5 +1,6 @@
 ---
 title: vue
+abbrlink: 43782
 ---
 
 v-on
