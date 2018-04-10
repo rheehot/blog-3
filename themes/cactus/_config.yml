@@ -15,7 +15,8 @@ nav:
   home: /
   about: /about/
   articles: /archives/
-  projects: projects_url
+  search: /Search/
+  projects: http://github.com/sculove
 
 
 # Links to your social media accounts.
@@ -25,8 +26,8 @@ nav:
 social_links:
   github: https://github.com/sculove
   twitter: https://twitter.com/sculove
-  facebook: /
-  linkedin: /
+  facebook: https://www.facebook.com/chanuk.son
+  linkedin: https://www.linkedin.com/in/chan-uk-son-8989ba56/
   mail: mailto:sculove@gmail.com
 
 
@@ -55,7 +56,7 @@ logo:
   width: 50
   height: 50
   url: /images/logo.png
-  gravatar: false
+  gravatar: true
 
 # Customize the favicons.
 # Cactus supports a limited set of the three most important icons:
