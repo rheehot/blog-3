@@ -5,8 +5,7 @@ categories:
 tags:
   - book
   - tools
-draft: true
-date: 2018-05-03 21:37:09
+date: 2018-07-07 20:37:09
 ---
 
 ## 이번으로 2번째 책을 탈고 했다.
