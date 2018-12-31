@@ -11,7 +11,7 @@ date: 2017-10-07 12:33:49
 
 추석 고향가기전에 Microsoft로 부터 다음과 같은 메일을 받았다.
 
-![Microsoft MVP](mail.png)
+{% asset_img Microsoft MVP](mail.png)
 
 오~ 마이갓!  
 내가 `Microsoft MVP (Most Valuable Professional)`라니...

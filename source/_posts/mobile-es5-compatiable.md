@@ -18,9 +18,10 @@ date: 2013-11-06 11:45:32
 
 데스크탑과 동일한 기준으로 확인했음
 
-![](ECMAScript5.png)
+{% asset_img ECMAScript5.png %}
 
 > 갤노트 2.3은 특이하게 안드로이드 4.0대와 같은 ECMAScript5를 지원
 
---------------
+---
+
 ### 결론적으로 iOS6, Android 4.1 이상에서부터는 ECMAScript 5를 맘껏 쓸수 있다~!

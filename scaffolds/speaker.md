@@ -9,7 +9,7 @@ date: { { date } }
 
 ### 제목
 
-![]()
+[{% asset_img filename.png %}]()
 
 블라블라
 

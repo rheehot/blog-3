@@ -8,9 +8,7 @@ abbrlink: 31160
 date: 2017-10-21 18:17:07
 ---
 
-### RxJS 써야겠어요? 안써야겠어요?
-
-![](express.jpg)
+{% asset_img express.jpg %}
 
 RxJS는 일관된 방식으로 안전하게 데이터 흐름을 처리하는 라이브러리입니다.
 이 발표는 RxJS가 본질적으로 의미하는 바를 살펴봅니다.
@@ -20,6 +18,8 @@ RxJS는 일관된 방식으로 안전하게 데이터 흐름을 처리하는 라
 
 {% iframe https://sculove.github.io/slides/rxjs/ 100% 500px %}
 자료 : https://sculove.github.io/slides/rxjs/
+
+<!-- more -->
 
 #### 동영상
 

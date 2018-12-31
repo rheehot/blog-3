@@ -13,7 +13,7 @@ date: 2015-09-24 17:00:00
 
 https://w3c.github.io/web-animations/
 
-![](CSS-SVG-Web-Animations.png)
+{% asset_img CSS-SVG-Web-Animations.png %}
 
 Web Animations에 대한 기술 스펙에 대한 발표 자료
 

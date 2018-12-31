@@ -12,7 +12,7 @@ date: 2016-02-06 17:00:00
 ### ES6은 어떻게 탄생했나?
 
 ECMAScript6의 탄생부터... ES6 맛보기까지.
-![](history.png)
+{% asset_img history.png %}
 
 ECMAScript6. ES2015라고 불리는 Javascript의 발전 역사.
 그리고, ES6이 무엇인지 간단히 살펴보는 발표자료.

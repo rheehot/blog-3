@@ -12,7 +12,7 @@ date: 2016-10-06 02:09:47
 
 ### Jasmine을 이용한 Javascript Test
 
-![](jasmine.png)
+{% asset_img jasmine.png %}
 [JavaScript Test](https://sculove.github.io/blog/2016/05/17/JavascriptTest/) 문서를 작성 후, 실제 테스트를 어떻게 진행해야 하는지에 대해 정리한 문서.
 
 #### 목차

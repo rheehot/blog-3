@@ -14,7 +14,7 @@ date: 2017-04-21 22:01:43
 
 ### Angular4 구글은 어떻게 성능 개선을 했나?
 
-![](angular4-icon.png)
+{% asset_img angular4-icon.png %}
 
 Angular 2.x 대비 Angular 4.x에서 바뀐점을 살펴보고,
 구글은 어떻게 성능 개선을 했는지에 대해 방법론적으로 살펴본다.
