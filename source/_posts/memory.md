@@ -1,7 +1,6 @@
 ---
 title: Chrome Devtools를 이용한 Web Application Memory 분석법
 categories:
-  - Tech
   - Presentation
 tags:
   - memory
@@ -11,7 +10,9 @@ tags:
 abbrlink: 36769
 date: 2016-10-06 02:27:48
 ---
+
 ### Chrome Devtools를 이용한 Web Application Memory 분석법
+
 ![](dontcontrol.png)
 
 SPA 개발을 하다보면 겪게 되는 메모리 문제.

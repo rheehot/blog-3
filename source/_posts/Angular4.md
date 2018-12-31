@@ -1,7 +1,6 @@
 ---
 title: Angular4 구글은 어떻게 성능 개선을 했나?
 categories:
-  - Tech
   - Presentation
 tags:
   - angular
@@ -12,7 +11,9 @@ tags:
 abbrlink: 18123
 date: 2017-04-21 22:01:43
 ---
+
 ### Angular4 구글은 어떻게 성능 개선을 했나?
+
 ![](angular4-icon.png)
 
 Angular 2.x 대비 Angular 4.x에서 바뀐점을 살펴보고,

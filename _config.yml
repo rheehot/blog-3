@@ -7,7 +7,7 @@ title: 손찬욱 Blog
 subtitle: 아내와 아들 그리고 딸밖에 모르는 남편
 description: FrontEnd 개발자. JavaScript, RxJS, Angular, React 기술 경험 블로그
 author: sculove
-language: ko
+language: en
 timezone: Asia/Seoul
 
 # URL
@@ -60,11 +60,10 @@ time_format: HH:mm:ss
 per_page: 10
 pagination_dir: page
 
-
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: hueman
+theme: tranquilpeak
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -84,3 +83,18 @@ feed:
   path: rss2.xml
   limit: 0
   hub:
+
+# robots.txt
+robotstxt:
+  User-agent: "*"
+  Allow: /
+  Sitemap: https://sculove.github.io/sitemap.xml
+
+#nofollow
+nofollow:
+  enable: true
+
+node_sass:
+  outputStyle: nested
+  precision: 5
+  sourceComments: false

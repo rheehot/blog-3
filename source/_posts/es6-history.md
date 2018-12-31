@@ -1,7 +1,6 @@
 ---
 title: ES6은 어떻게 탄생했나?
 categories:
-  - Tech
   - Presentation
 tags:
   - es6
@@ -9,7 +8,9 @@ tags:
 abbrlink: 32908
 date: 2016-02-06 17:00:00
 ---
+
 ### ES6은 어떻게 탄생했나?
+
 ECMAScript6의 탄생부터... ES6 맛보기까지.
 ![](history.png)
 

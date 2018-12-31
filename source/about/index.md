@@ -3,9 +3,11 @@ title: 외부 발표 및 글 모음
 ---
 
 ## 발표 자료 모음
-http://sculove.github.io/blog/categories/Tech/Presentation/
+
+http://sculove.github.io/blog/categories/Presentation/
 
 ### Deview
+
 - [[2016.10.24] Deview 2016. Angular2 vs React, React vs Angular2](https://deview.kr/2016/schedule#session/137)
 - [[2014.09.29] Deview 2014. 네이버 모바일 홈을 움직이는 반응형 무한스크롤의 비밀](http://deview.kr/2014/session?seq=6)
 
@@ -22,5 +24,3 @@ http://sculove.github.io/blog/categories/Tech/Presentation/
 - [[2014.07.24] 반응형 무한 스크롤 개발 및 성능 튜닝 in MobileWeb](http://d2.naver.com/helloworld/870369)
 - [[2012.11.23] JMC 스마트하게 사용하기](http://d2.naver.com/helloworld/211221)
 - [[2012.07.05] JMC 스크롤 컴포넌트의 이해: jindo.m.Scroll](http://d2.naver.com/helloworld/89902)
-
-

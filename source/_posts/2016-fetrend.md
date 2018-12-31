@@ -1,7 +1,6 @@
 ---
 title: 진화의 시작
 categories:
-  - Tech
   - Presentation
 tags:
   - es6
@@ -10,7 +9,9 @@ tags:
 abbrlink: 56728
 date: 2016-04-19 22:32:31
 ---
+
 ### 진화의 시작 - 2016년 Front End 기술동향
+
 2016년 FrontEnd 기술동향을 살펴보는 발표자료.
 ![](newjavascript.jpg)
 
@@ -18,4 +19,5 @@ date: 2016-04-19 22:32:31
 자료: https://sculove.github.io/slides/2016_FETrend/
 
 #### 발표한 행사 정보
+
 [2016.04.19] 웹월드 모바일 컨퍼런스 2016에 발표한 자료 http://www.bizdeli.com/webworldmobile/index.asp
