@@ -98,3 +98,24 @@ node_sass:
   outputStyle: nested
   precision: 5
   sourceComments: false
+
+keywords:
+  - frontend
+  - javascript
+  - developer
+
+algolia:
+  appId: "0E46FZ0JA2"
+  apiKey: "01370395a4f67d606d12d489c615c822"
+  adminApiKey: "1421c21d64d12e49af4738fec995e785"
+  chunkSize: 5000
+  indexName: "sculove.github.io"
+  fields:
+    - content:strip:truncate,0,500
+    - excerpt:strip
+    - gallery
+    - permalink
+    - photos
+    - slug
+    - tags
+    - title
