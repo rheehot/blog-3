@@ -13,7 +13,7 @@ date: 2016-04-19 22:32:31
 ### 진화의 시작 - 2016년 Front End 기술동향
 
 2016년 FrontEnd 기술동향을 살펴보는 발표자료.
-![](newjavascript.jpg)
+{% asset_img newjavascript.jpg %}
 
 {% iframe https://sculove.github.io/slides/2016_FETrend/ 100% 500px %}
 자료: https://sculove.github.io/slides/2016_FETrend/
