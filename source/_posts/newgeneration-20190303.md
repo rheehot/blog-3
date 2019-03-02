@@ -1,7 +1,7 @@
 ---
 title: 90년대생이 온다.
 categories:
-  - life
+  - Life
 tags:
   - book
 abbrlink: 8983

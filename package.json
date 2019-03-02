@@ -8,7 +8,7 @@
   "scripts": {
     "start": "hexo server",
     "index": "hexo algolia",
-    "deploy": "hexo clean && npm run index && hexo generate && hexo deploy"
+    "deploy": "cd ./themes/tranquilpeak && grunt build && cd ../../ && hexo clean && npm run index && hexo generate && hexo deploy"
   },
   "dependencies": {
     "hexo": "^3.8.0",
