@@ -4,7 +4,7 @@ categories:
   - Presentation
 tags:
   -
-date: { { date } }
+date: {{ date }}
 ---
 
 ### 제목
