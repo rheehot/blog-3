@@ -12,7 +12,7 @@ abbrlink: 31707
 date: 2019-06-09 12:48:11
 ---
 
-네이버 모바일 블로그 서비스에 **Node 기반의 SSR(Server Side Rendering) 랜더링** 을 도입하다 Memory Leak 이슈를 맞이했다.
+**Node 기반의 SSR(Server Side Rendering) 랜더링** 을 서비스에 도입하다 Memory Leak 이슈를 맞이했다.
 Java 환경의 성능테스트를 준비하면 간혹 겪게되는 이슈이긴 한데. Node.js 도입 시작부터 memory leak 이슈가 튀어나와서 사실 당황스럽긴했다.
 
 ### Memory Leak 현상 감지하기
