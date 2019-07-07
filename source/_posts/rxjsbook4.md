@@ -227,37 +227,28 @@ Observer은 Observable과 subscribe 메소드를 통해 연결되어 진다.
 > ##### 1. Observer 객체를 전달하는 subscribe 사용 예
 >
 > ```js
-> const observer = {
->   next: x => console.log("Observer가 Observable로부터 받은 데이터: " + x),
->   error: err =>
->     console.error("Observer가 Observable로부터 받은 에러 데이터: " + err),
->   complete: () =>
->     console.log("Observer가 Observable로부터 종료 되었다는 알림을 받은 경우")
-> };
-> click$.subscribe(observer); // observer 객체를 파라미터로 받는다.
-> ```
-
-````
->
+const observer = {
+   next: x => console.log("Observer가 Observable로부터 받은 데이터: " + x),
+   error: err =>
+     console.error("Observer가 Observable로부터 받은 에러 데이터: " + err),
+   complete: () =>
+     console.log("Observer가 Observable로부터 종료 되었다는 알림을 받은 경우")
+};
+click$.subscribe(observer); // observer 객체를 파라미터로 받는다.
+```
 > ##### 2. next 콜백함수를 전달하는 subscribe 사용 예
 > ```js
  // observer의 next 함수를 파라미터로 받는다.
  click$.subscribe(x => console.log("Observer가 Observable로부터 받은 데이터: " + x));
-````
-
+```
 > ##### 3. next, error, complete 콜백함수를 전달하는 subscribe 사용 예
->
 > ```js
->  // observer의 next, error, complete 함수를 파라미터로 받는다.
->  click$.subscribe(x => console.log("Observer가 Observable로부터 받은 데이터: " + x),
-> ```
-
+ // observer의 next, error, complete 함수를 파라미터로 받는다.
+  click$.subscribe(x => console.log("Observer가 Observable로부터 받은 데이터: " + x),
     error: err => console.error("Observer가 Observable로부터 받은 에러 데이터: " + err),
     complete: () => console.log("Observer가 Observable로부터 종료 되었다는 알림을 받은 경우")
-
 );
-
-````
+```
 
 ### Subscription
 Observable.subscribe의 반환값이다. Subscription 객체는 자원의 해제를 담당한다. 등록된 Observable의 데이터를 더이상 전달 받고 싶지 않을 경우 `unsubscribe` 메소드를 호출하여 자원을 해제한다.
@@ -270,7 +261,7 @@ const subscription = currentTarget$.subscribe(observer);
 
 // subscription으로 자원 해제가 가능
 subscription.unsubscribe();
-````
+```
 
 ## RxJS 개발 방법
 
