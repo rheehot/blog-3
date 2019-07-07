@@ -11,7 +11,7 @@ date: 2017-10-07 12:33:49
 
 추석 고향가기전에 Microsoft로 부터 다음과 같은 메일을 받았다.
 
-{% asset_img Microsoft MVP](mail.png)
+{% asset_img Microsoft MVP](mail.png) %}
 
 오~ 마이갓!  
 내가 `Microsoft MVP (Most Valuable Professional)`라니...
@@ -62,7 +62,7 @@ VSCode는 오픈소스 V8 기반의 편집기로서 MS가 가지고 있는 Visua
 
 #### Microsoft MVP
 지인의 우연한 소개로 신청서를 적었다. 사실 크게 관심도 없어서 잊고 지냈었는데 [MVP](https://mvp.microsoft.com/en-us/PublicProfile/5002818)가 되었다.
-
+ 
 막상 되고보니 뭔가 해야할 것 같은 책임감이 든다.  
 VSCode Extention이라도 만들어야하는 기분이다.
 
