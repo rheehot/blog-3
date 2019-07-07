@@ -130,33 +130,26 @@ function process(people) {
 > 일급 객체(First-class object)는 다음과 같은 특성을 가지고 있다.
 >
 > - 변수 혹은 데이터 구조에 저장할 수 있다
->
 > ```js
-> var savedFunction = function() {};
-> ```
-
-````
+  var savedFunction = function() {};
+```
+>
 > - 파라미터로 전달할 수 있다.
 > ```js
- function foo(f, value) {};
+function foo(f, value) {};
  foo(function() {
      console.log("함수를 파라미터로 전달 할 수 있다");
  }, "값");
-````
-
-> - 반환값으로 사용할 수 있다.
+```
 >
+> - 반환값으로 사용할 수 있다.
 > ```js
->  function foo() {
-> ```
-
+function foo() {
     return function() {
        console.log("함수를 반환할 수 있다");
     };
-
 }
-
-````
+```
 
 #### 로직의 분리
 앞의 process 함수를 기능 단위의 로직과 반복문, 분기문으로 분리해보자.
@@ -189,7 +182,7 @@ function logic(height, mass, gender) {
 		obesityUsingBmi
 	};
 }
-````
+```
 
 사용자 정보별 HTML을 만드는 함수는 user 정보를 받아서 string 형태의 html을 반환한다.
 
@@ -243,22 +236,20 @@ logic, makeHtml 함수를 만듦으로서 우리는 핵심 로직을 작성는�
 >   출처: wikipedia https://en.wikipedia.org/wiki/Higher-order_function
 > - 고차 함수는 변경되는 주요 부분을 함수로 제공함으로서 동일한 패턴 내에 존재하는 문제를 손쉽게 해결할 수 있는 고급 프로그래밍 기법이다.
 > - 고차 함수를 이용하면 함수의 합성, 변형과 같은 작업을 손쉽게 할수 있다. 더불어 Currying, Memoization과 같은 기법도 사용할 수 있다.
->
 > ```js
-> const twice = (f, v) => f(f(v));
-> const fn = v => v + 3;
-> console.log(twice(fn, 7)); // 13
-> ```
+const twice = (f, v) => f(f(v));
+const fn = v => v + 3;
+console.log(twice(fn, 7)); // 13
+```
 
-````
 
 ```js
 function process(people) {
-    return people.results
-	        .filter(user => /male|female/.test(user.gender))
+  return people.results
+	  .filter(user => /male|female/.test(user.gender))
 		.map(user => Object.assign(
-                               user,
-			       logic(user.height, user.mass, user.gender)
+      user,
+      logic(user.height, user.mass, user.gender)
 		))
 		.reduce((acc, user) => {
 			acc.push(makeHtml(user));
@@ -266,7 +257,7 @@ function process(people) {
 		}, [])
 		.join("");
 }
-````
+```
 
 if문은 filter로 변환하고, 값을 변환해야하는 경우에는 map을 이용하고, 축적된 데이터를 반환해야하는 경우에는 reduce를 이용하였다.
 각각의 고차함수에 전달되는 함수는 외부의 변수에 영향을 미치지도 않고, 영향을 받지도 않는 함수이다.
