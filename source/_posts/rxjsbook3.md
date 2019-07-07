@@ -296,7 +296,7 @@ console.log(arr === mappedArr); // false
 
 Array와 다른점이 있다면 Array의 경우는 새로운 Array 객체 생성 작업만 하지만 Observable은 새로운 Observable를 만들고, 그 Observable이 operator를 호출한 Observable을 내부적으로 subscribe 하는 형태를 유지한다. 즉, Linked list 형태로 기존 Observable 객체와 새롭게 만든 Observable 객체를 operator로 연결하고 있다.
 
-{% asset_img linked-observable](linked-observable.png)
+{% asset_img linked-observable.png linked-observable %}
 
 한 예로 Observable.map은 다음과 같이 구현되어 있다.
 

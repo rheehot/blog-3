@@ -31,7 +31,7 @@ A라는 작은 상태 머신의 상태값은 B의 입력값이 될수 있고, B�
 사용자 정보(상태)를 System 클래스가 check() 함수에서 사용하고 있는 예제이다.
 System과 User간에는 다음과 같은 의존성이 존재한다.
 
-{% asset_img B가 A를 사용하는 구조](A-B-use.png)
+{% asset_img A-B-use.png B가 A를 사용하는 구조 %}
 
 ```js
 class User {
@@ -166,7 +166,7 @@ Observer는 언제든지 추가, 삭제할 수 있으며, 새로운 타입의 Ob
 하지만 Observer Pattern은 이와 다르게 의존 관계의 대상(Subject)으로 부터 데이터를 제공 받는 방식이다.
 전자의 경우를 `Pull` 방식이라고 후자를 `Push` 방식이라고 한다.
 
-{% asset_img Pull과 Push](pull_push.png)
+{% asset_img pull_push.png Pull과 Push %}
 
 Push 방식은 Pull 방식에 비해 상태 전파 문제를 효과적으로 처리 할 수 있다.
 Push 방식으로 구성된 Observer Pattern은 Subject의 상태가 변경되었을 경우 관찰하는 Observer에게 자동으로 알려준다. 특히, Subject와 Observer가 1:n의 상황에서는 더욱 유효하다.
@@ -190,7 +190,7 @@ Observer Pattern은 `Observer.update`만 존재하기 때문에 Subject에서는
 
 이를 다이어그램으로 표현하면 다음과 같다.
 
-{% asset_img Observer 패턴](observerpattern.png)
+{% asset_img observerpattern.png Observer 패턴 %}
 
 이제 간단하게 코드로 작성해보자.
 

@@ -205,7 +205,7 @@ RxJS에서는 다루는 중요 개념은 다음과 같다.
 ### Observable
 
 시간을 축으로 연속적인 데이터를 저장하는 컬렉션을 표현한 객체이다. 데이터를 제공하는 소스나 Observabler과 연결되어 데이터를 제공한다. Operator와 함께 RxJS의 핵심 중의 핵심인 개념이다. 이를 stream이라고 부른다.
-{% asset_img observable](observable_detail.png)
+{% asset_img observable_detail.png observable %}
 
 ### Operator
 
@@ -213,7 +213,7 @@ Observable의 static 메소드나 인스턴스의 메소드로 Observable 객체
 Operator는 Observable을 생성하기도 하고, 각각의 Observable을 연결하기도 한다. 또한, Observable을 분리하거나 합치기도 한다.
 위 예제에서는 `Observable.fromEvent` operator를 이용하여 Observable을 생성하고 Observable 인스턴스의 `pluck` operator를 이용하여 데이터를 변경하였다.
 
-{% asset_img operator](operator_detail.png)
+{% asset_img operator_detail.png operator %}
 
 ### Observer
 
@@ -262,7 +262,7 @@ Observer은 Observable과 subscribe 메소드를 통해 연결되어 진다.
 ### Subscription
 Observable.subscribe의 반환값이다. Subscription 객체는 자원의 해제를 담당한다. 등록된 Observable의 데이터를 더이상 전달 받고 싶지 않을 경우 `unsubscribe` 메소드를 호출하여 자원을 해제한다.
 
-{% asset_img subscription](subscription_detail.png)
+{% asset_img subscription_detail.png subscription %}
 
 ```js
 // ...
@@ -275,7 +275,7 @@ subscription.unsubscribe();
 ## RxJS 개발 방법
 
 위에서 제시한 예제를 rxjs의 4개 개념으로 표현하면 다음과 같다.
-{% asset_img rxjs 4가지 개념](rxjs-structure1.png)
+{% asset_img rxjs-structure1.png rxjs 4가지 개념 %}
 
 이벤트를 Observable로 변환하고 Observable의 pluck, filter 메소드를 통해 데이터를 변경한다. 데이터를 처리할 Observer를 만들고, Observable의 subscribe 메소드를 통해 Observer를 구독한다.
 
