@@ -85,7 +85,7 @@ function ClientRequest(input, options, cb) {
 
 
 1. **axios는 302 HTTP Status 코드를 받게 되면 자동으로 redirect 요청을 보낸다.**
-   ([axios의 기본 설정값](https://github.com/axios/axios)은 maxRedirects 가 `5` 입니다.)
+   ([axios의 기본 설정값](https://github.com/axios/axios)은 maxRedirects 가 `5` 이다.)
 
    ```js
    // `maxRedirects` defines the maximum number of redirects to follow in node.js.
@@ -152,5 +152,5 @@ Sentry는 가이드 대로 충실하게 따랐던 거죠 ㅠㅠ
 
 1. axios를 SSR에서 사용하는 경우, 꼭! `maxRedirects` 옵션을 0으로 설정하여 redirect되지 않도록 하자.
 2. Node.js의 비동기 작업에서 에러가 나는 경우 `uncaughtException` 이 발생할 수 있다. 
-   - 이땐 `try~catch`로도 에러를 잡을 수가 없다.
-   - `uncaughtException`이 발생하면 Node Application은 재시작하자!
+3. 이땐 `try~catch`로도 에러를 잡을 수가 없다.
+4. `uncaughtException`이 발생하면 Node Application은 재시작하자!
