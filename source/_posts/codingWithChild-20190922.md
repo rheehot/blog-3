@@ -5,6 +5,7 @@ categories:
 tags:
   - 코딩교육
   - 한컴타자연습
+abbrlink: 23712
 date: 2019-09-22 01:36:59
 ---
 
