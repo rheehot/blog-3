@@ -1,0 +1,816 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        VSCODE Extension 만든 삽질기 - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2017/12/27/createvsextension/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"MS에 기여한게 없어서 뭔가 해봐야겠다는 생각에그동안 만들고 싶었던 vscode extentions을 만들어 봤다.\n\n\nhttps://marketplace.visualstudio.com/items?itemName=sculove.translator\n한글을 번역할 때는 번역된 텍스트에 적용할 수 있는 접두사가 적용된 메서드의 이름을 보여주는 기능도 넣었다.\n\n\n\n\n왜 만들었나?김지한(laziel)군과 윤종문(문)군이 이런거 있으면 좋겠다고 이야기해서 만들기 시작하긴 했는데…따지고 보니 내가 더 필요한 것 같았다.\n우리가 개발할 때 항상 켜놓고 보는게 사전과 번역기다.change와 update, alter등 우리말로는 다 변화하다라는 의미인데 실제 영어는 각각이 의미하는 바가 다르다. 따라서 매번 변수명, 메소드명 짓는데 시간을 낭비한다.그때 기분에 따라 또는 떠오르는 것에 따라 정하다보니 나중에 코드를 보면 의미가 불명확해서 내가 봐도 헷갈리게 된다.더군다나 같이 개발하는 사람들또한 헷갈리다보니 나중에 가서는 더.더.더. 헷갈린다.\n그래서 사전을 보거나 번역을 하는데. 이게 의외로 시간이 좀 걸린다.\nVSCode Extention 구조에 대한 회고사실 만든 코드는 많지 않지만, 우선은 vscode extentions에 대한 학습이 필요했기에 틈틈히 관련 내용을 살펴봤었다.\nMS가 문서화 하나는 정말 잘해 놓은것 같아서 사실 보기에는 꽤 편했다.내가 참조한 문서는 여기 overview 문서를 시작으로 vsdoe namespace API 문서까지 봤다.예상대로 vscode의 extension은 command 패턴으로 되어 있어서 커멘트 단위로 짜서 등록을 하고 쓰는 식이 었다.\n약간 특이한 점은 contribute points가 있어서 템플릿 메타 프로그래밍이 가능하다. 정의된 항목에 정의된 정보를 입력하면 코딩이 된다. 이것도 MS가 예전부터 지향했던 방식 중의 하나라 개발하기에는 편했다. 개인적으로는 메타 프로그래밍과 의 적정한 수준을 유지한게 좋았다.\n다음으로 특이한점은 Language Server가 있었다.처음에는 Language Server라 길래 언어작업을 할때 쓰는 것인가로 생각했는데 알고보니 비용이 많이 발생하는 작업을 서버에서 처리 후 VSCode Language Protocol로 전달하는 형태였다.이건 좀 괜찮은 방식인것 같다. 내가 만들 extention과는 관련이 없지만 나중에 좀 복잡한 것 만들때는 한번 만들어봐야겠다.\n\n\n만들면서 내가 한 삽질은?아쉬운 점은 API문서가 좀 빈약했다.아마도 typescript를 이용해서 타입 정의와 설명 정도를 뽑았던것 같다.사실 이 정도도 훌륭하지만 간단한 예제코드가 있었으면 더 좋았을것 같다.결국 직접 코딩을 해보면서 확인해 보거나, 그것이 안된다면 github 검색을 이용해서 찾아봤다.github가 의외로 좋은 코드조각들을 보여줬다.\n\n\nvscode는… 노드입니다.vscode가 electron에서 돌다보니 우선 기본적으로 node 환경이다.브라우저 개발에 익숙하다보니 그냥 브라우저인가 보다 하고 작업하다가 나중에 깨닫게(?) 되서 약간 어이가 없는 삽질을 했다. (Document를 너무 설렁 설렁봤다 ㅠㅠ)사실 이렇게 헷갈린 이유는 extentions이 돌아가는 곳에서 devTool를 볼수 있기 때문이다.\n\n\n암튼 이로 인해 브라우저 환경으로 착각하고 fetch API를 써봤지만 안되서 삽질을 좀 했다.devtool에서는 분명 fetch API를 사용할 수 있는데 정작 코드에서는 에러가 나서 난감했다.\n환경이 node라는 것을 알았으나, 처음에 fetch를 사용하고자 했던 마음을 접을 수가 없어서 결국 isomorphic-fetch을 사용했다.나중에 알게된 거지만 electron-fetch를 썼으면 더 좋았을 뻔 했다.FormData도 있고 여러가지 쓸 수 있어서 좋아보였다.담에 코드 수정할때 함 바꿔봐야겠다.\n아~ typescripttypscript 설정에서 좀 해멨던것 같다. 어떻게 보면 이것도 node 환경을 인지못해서 난 불상사지만 아니었다고 해도 좀 헤멜수는 있다.vscode가 만들어 주는 tsconfig.ts는 target이 es6이고, lib도 es6만 명시되어있다.\n12345678910111213141516&#123;    \"compilerOptions\": &#123;        \"module\": \"commonjs\",        \"target\": \"es6\",        \"outDir\": \"out\",        \"lib\": [            \"es6\"        ],        \"sourceMap\": true,        \"rootDir\": \"src\"    &#125;,    \"exclude\": [        \"node_modules\",        \".vscode-test\"    ]&#125;\n\n이렇게 직접적으로 lib를 지정하면 문제는 딱 지정한 그것만 포함된다.lib가 지정되어 있지 않으면 타겟에 따라 기본적으로 추가되는 lib가 다르다.\n\nhttps://www.typescriptlang.org/docs/handbook/compiler-options.html\n\ntarget ES5인 경우 DOM,ES5,ScriptHost이 자동 추가\ntarget ES6인 경우 DOM,ES6,DOM.Iterable,ScriptHost이 자동 추가\n\n\n따라서 DOM 관련된 API를 사용하면 타입 에러가 난다.\n그런데 문제는 fetch API를 쓰려고 DOM을 추가하면 vscode가 바로 반영이 안된다. 자꾸 타입에러가 난다.이때 결론은 vscode를 껐다가 다시 부르면 된다.아~ 이것 때문에 잘못 설정한줄 알고 삽질을 많이함 ㅠㅠ\n소감?개발자가 만들기에는 꽤 괜찮은 vscode extentions.생각보다 쉽게 만들수 있었다.좀 아쉬운 점은 custom UI를 만들수가 없다. 그냥 간단한 view를 보여주고 싶은데 사실 관련 API를 찾지 못했다.아마도 정형화된 UI를 제공하기 위한 포석일수도 있을것 같다.그래고 좀 뷰만 잘되는 UI라도 하나 있으면 좋겠다.\n다름에 또 아이디어가 있으면 한번 더 만들어보고 싶다.\n참고한 예제\nhttps://code.visualstudio.com/docs/extensions/example-word-count\nhttps://github.com/Microsoft/vscode-MDTools : vscode.window.showQuickPick, QuickPickItem, TextEditor 사용 예\nhttps://github.com/Microsoft/vscode-extension-samples\n\n","dateCreated":"2017-12-27T17:47:32+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2017-12-27T17:47:32+09:00","description":"MS에 기여한게 없어서 뭔가 해봐야겠다는 생각에그동안 만들고 싶었던 vscode extentions을 만들어 봤다.\n\n\nhttps://marketplace.visualstudio.com/items?itemName=sculove.translator\n한글을 번역할 때는 번역된 텍스트에 적용할 수 있는 접두사가 적용된 메서드의 이름을 보여주는 기능도 넣었다.\n","headline":"VSCODE Extension 만든 삽질기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2017/12/27/createvsextension/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2017/12/27/createvsextension/","keywords":"vscode, extension"}</script>
+    <meta name="description" content="MS에 기여한게 없어서 뭔가 해봐야겠다는 생각에그동안 만들고 싶었던 vscode extentions을 만들어 봤다.   https://marketplace.visualstudio.com/items?itemName=sculove.translator 한글을 번역할 때는 번역된 텍스트에 적용할 수 있는 접두사가 적용된 메서드의 이름을 보여주는 기능도 넣었다.">
+<meta name="keywords" content="vscode,extension">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="VSCODE Extension 만든 삽질기">
+<meta property="og:url" content="http://sculove.github.io/blog/2017/12/27/createvsextension/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="MS에 기여한게 없어서 뭔가 해봐야겠다는 생각에그동안 만들고 싶었던 vscode extentions을 만들어 봤다.   https://marketplace.visualstudio.com/items?itemName=sculove.translator 한글을 번역할 때는 번역된 텍스트에 적용할 수 있는 접두사가 적용된 메서드의 이름을 보여주는 기능도 넣었다.">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/12/27/createvsextension/translator.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/12/27/createvsextension/korToEn.gif">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/12/27/createvsextension/extensibility-architecture.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/12/27/createvsextension/github-code.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/12/27/createvsextension/devtool.png">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VSCODE Extension 만든 삽질기">
+<meta name="twitter:description" content="MS에 기여한게 없어서 뭔가 해봐야겠다는 생각에그동안 만들고 싶었던 vscode extentions을 만들어 봤다.   https://marketplace.visualstudio.com/items?itemName=sculove.translator 한글을 번역할 때는 번역된 텍스트에 적용할 수 있는 접두사가 적용된 메서드의 이름을 보여주는 기능도 넣었다.">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2017/12/27/createvsextension/translator.png">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            VSCODE Extension 만든 삽질기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-12-27T17:47:32+09:00">
+	
+		    Dec 27, 2017
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Tech/">Tech</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>MS에 기여한게 없어서 뭔가 해봐야겠다는 생각에<br>그동안 만들고 싶었던 vscode extentions을 만들어 봤다.</p>
+<img src="/blog/2017/12/27/createvsextension/translator.png">
+
+<p><a href="https://marketplace.visualstudio.com/items?itemName=sculove.translator" rel="external nofollow noopener noreferrer" target="_blank">https://marketplace.visualstudio.com/items?itemName=sculove.translator</a></p>
+<p>한글을 번역할 때는 번역된 텍스트에 적용할 수 있는 접두사가 적용된 메서드의 이름을 보여주는 기능도 넣었다.</p>
+<img src="/blog/2017/12/27/createvsextension/korToEn.gif">
+
+<a id="more"></a>
+
+<h2 id="왜-만들었나"><a href="#왜-만들었나" class="headerlink" title="왜 만들었나?"></a>왜 만들었나?</h2><p>김지한(laziel)군과 윤종문(문)군이 이런거 있으면 좋겠다고 이야기해서 만들기 시작하긴 했는데…<br>따지고 보니 내가 더 필요한 것 같았다.</p>
+<p>우리가 개발할 때 항상 켜놓고 보는게 사전과 번역기다.<br>change와 update, alter등 우리말로는 다 <code>변화하다</code>라는 의미인데 실제 영어는 각각이 의미하는 바가 다르다. 따라서 매번 변수명, 메소드명 짓는데 시간을 낭비한다.<br>그때 기분에 따라 또는 떠오르는 것에 따라 정하다보니 나중에 코드를 보면 의미가 불명확해서 내가 봐도 헷갈리게 된다.<br>더군다나 같이 개발하는 사람들또한 헷갈리다보니 나중에 가서는 더.더.더. 헷갈린다.</p>
+<p>그래서 사전을 보거나 번역을 하는데. 이게 의외로 시간이 좀 걸린다.</p>
+<h2 id="VSCode-Extention-구조에-대한-회고"><a href="#VSCode-Extention-구조에-대한-회고" class="headerlink" title="VSCode Extention 구조에 대한 회고"></a>VSCode Extention 구조에 대한 회고</h2><p>사실 만든 코드는 많지 않지만, 우선은 vscode extentions에 대한 학습이 필요했기에 틈틈히 관련 내용을 살펴봤었다.</p>
+<p>MS가 문서화 하나는 정말 잘해 놓은것 같아서 사실 보기에는 꽤 편했다.<br>내가 참조한 문서는 여기 <a href="https://code.visualstudio.com/docs/extensions/overview" rel="external nofollow noopener noreferrer" target="_blank">overview</a> 문서를 시작으로 <a href="https://code.visualstudio.com/docs/extensionAPI/vscode-api" rel="external nofollow noopener noreferrer" target="_blank">vsdoe namespace API</a> 문서까지 봤다.<br>예상대로 vscode의 extension은 command 패턴으로 되어 있어서 커멘트 단위로 짜서 등록을 하고 쓰는 식이 었다.</p>
+<p>약간 특이한 점은 <a href="https://code.visualstudio.com/docs/extensionAPI/extension-points" rel="external nofollow noopener noreferrer" target="_blank">contribute points</a>가 있어서 <code>템플릿 메타 프로그래밍</code>이 가능하다. 정의된 항목에 정의된 정보를 입력하면 코딩이 된다. 이것도 MS가 예전부터 지향했던 방식 중의 하나라 개발하기에는 편했다. 개인적으로는 메타 프로그래밍과 의 적정한 수준을 유지한게 좋았다.</p>
+<p>다음으로 특이한점은 Language Server가 있었다.<br>처음에는 Language Server라 길래 언어작업을 할때 쓰는 것인가로 생각했는데 알고보니 <code>비용이 많이 발생하는 작업을 서버에서 처리 후 VSCode Language Protocol로 전달하는 형태</code>였다.<br>이건 좀 괜찮은 방식인것 같다. 내가 만들 extention과는 관련이 없지만 나중에 좀 복잡한 것 만들때는 한번 만들어봐야겠다.</p>
+<img src="/blog/2017/12/27/createvsextension/extensibility-architecture.png">
+
+<h2 id="만들면서-내가-한-삽질은"><a href="#만들면서-내가-한-삽질은" class="headerlink" title="만들면서 내가 한 삽질은?"></a>만들면서 내가 한 삽질은?</h2><h3 id="아쉬운-점은-API문서가-좀-빈약했다"><a href="#아쉬운-점은-API문서가-좀-빈약했다" class="headerlink" title="아쉬운 점은 API문서가 좀 빈약했다."></a>아쉬운 점은 API문서가 좀 빈약했다.</h3><p>아마도 typescript를 이용해서 타입 정의와 설명 정도를 뽑았던것 같다.<br>사실 이 정도도 훌륭하지만 간단한 예제코드가 있었으면 더 좋았을것 같다.<br>결국 직접 코딩을 해보면서 확인해 보거나, 그것이 안된다면 github 검색을 이용해서 찾아봤다.<br>github가 의외로 좋은 코드조각들을 보여줬다.</p>
+<img src="/blog/2017/12/27/createvsextension/github-code.png">
+
+<h3 id="vscode는…-노드입니다"><a href="#vscode는…-노드입니다" class="headerlink" title="vscode는… 노드입니다."></a>vscode는… 노드입니다.</h3><p>vscode가 electron에서 돌다보니 우선 기본적으로 node 환경이다.<br>브라우저 개발에 익숙하다보니 그냥 브라우저인가 보다 하고 작업하다가 나중에 깨닫게(?) 되서 약간 어이가 없는 삽질을 했다. (Document를 너무 설렁 설렁봤다 ㅠㅠ)<br>사실 이렇게 헷갈린 이유는 extentions이 돌아가는 곳에서 devTool를 볼수 있기 때문이다.</p>
+<img src="/blog/2017/12/27/createvsextension/devtool.png">
+
+<p>암튼 이로 인해 브라우저 환경으로 착각하고 fetch API를 써봤지만 안되서 삽질을 좀 했다.<br>devtool에서는 분명 fetch API를 사용할 수 있는데 정작 코드에서는 에러가 나서 난감했다.</p>
+<p>환경이 node라는 것을 알았으나, 처음에 fetch를 사용하고자 했던 마음을 접을 수가 없어서 결국 <a href="https://github.com/matthew-andrews/isomorphic-fetch" rel="external nofollow noopener noreferrer" target="_blank">isomorphic-fetch</a>을 사용했다.<br>나중에 알게된 거지만 <a href="https://www.npmjs.com/package/electron-fetch" rel="external nofollow noopener noreferrer" target="_blank">electron-fetch</a>를 썼으면 더 좋았을 뻔 했다.<br><a href="https://developer.mozilla.org/ko/docs/Web/API/FormData" rel="external nofollow noopener noreferrer" target="_blank">FormData</a>도 있고 여러가지 쓸 수 있어서 좋아보였다.<br>담에 코드 수정할때 함 바꿔봐야겠다.</p>
+<h3 id="아-typescript"><a href="#아-typescript" class="headerlink" title="아~ typescript"></a>아~ typescript</h3><p>typscript 설정에서 좀 해멨던것 같다. 어떻게 보면 이것도 node 환경을 인지못해서 난 불상사지만 아니었다고 해도 좀 헤멜수는 있다.<br>vscode가 만들어 주는 tsconfig.ts는 <code>target</code>이 es6이고, <code>lib</code>도 es6만 명시되어있다.</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">"compilerOptions"</span>: &#123;</span><br><span class="line">        <span class="string">"module"</span>: <span class="string">"commonjs"</span>,</span><br><span class="line">        <span class="string">"target"</span>: <span class="string">"es6"</span>,</span><br><span class="line">        <span class="string">"outDir"</span>: <span class="string">"out"</span>,</span><br><span class="line">        <span class="string">"lib"</span>: [</span><br><span class="line">            <span class="string">"es6"</span></span><br><span class="line">        ],</span><br><span class="line">        <span class="string">"sourceMap"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="string">"rootDir"</span>: <span class="string">"src"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">"exclude"</span>: [</span><br><span class="line">        <span class="string">"node_modules"</span>,</span><br><span class="line">        <span class="string">".vscode-test"</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>이렇게 직접적으로 <code>lib를 지정하면 문제는 딱 지정한 그것만 포함된다.</code><br>lib가 지정되어 있지 않으면 타겟에 따라 기본적으로 추가되는 lib가 다르다.</p>
+<blockquote>
+<p><a href="https://www.typescriptlang.org/docs/handbook/compiler-options.html" rel="external nofollow noopener noreferrer" target="_blank">https://www.typescriptlang.org/docs/handbook/compiler-options.html</a></p>
+<ul>
+<li>target ES5인 경우 <code>DOM,ES5,ScriptHost</code>이 자동 추가</li>
+<li>target ES6인 경우 <code>DOM,ES6,DOM.Iterable,ScriptHost</code>이 자동 추가</li>
+</ul>
+</blockquote>
+<p>따라서 DOM 관련된 API를 사용하면 타입 에러가 난다.</p>
+<p>그런데 문제는 fetch API를 쓰려고 DOM을 추가하면 vscode가 바로 반영이 안된다. 자꾸 타입에러가 난다.<br>이때 결론은 <code>vscode를 껐다가 다시 부르면 된다.</code><br>아~ 이것 때문에 잘못 설정한줄 알고 삽질을 많이함 ㅠㅠ</p>
+<h2 id="소감"><a href="#소감" class="headerlink" title="소감?"></a>소감?</h2><p>개발자가 만들기에는 꽤 괜찮은 vscode extentions.<br>생각보다 쉽게 만들수 있었다.<br>좀 아쉬운 점은 custom UI를 만들수가 없다. 그냥 간단한 view를 보여주고 싶은데 사실 관련 API를 찾지 못했다.<br>아마도 정형화된 UI를 제공하기 위한 포석일수도 있을것 같다.<br>그래고 좀 뷰만 잘되는 UI라도 하나 있으면 좋겠다.</p>
+<p>다름에 또 아이디어가 있으면 한번 더 만들어보고 싶다.</p>
+<h2 id="참고한-예제"><a href="#참고한-예제" class="headerlink" title="참고한 예제"></a>참고한 예제</h2><ul>
+<li><a href="https://code.visualstudio.com/docs/extensions/example-word-count" rel="external nofollow noopener noreferrer" target="_blank">https://code.visualstudio.com/docs/extensions/example-word-count</a></li>
+<li><a href="https://github.com/Microsoft/vscode-MDTools" rel="external nofollow noopener noreferrer" target="_blank">https://github.com/Microsoft/vscode-MDTools</a> : vscode.window.showQuickPick, QuickPickItem, TextEditor 사용 예</li>
+<li><a href="https://github.com/Microsoft/vscode-extension-samples" rel="external nofollow noopener noreferrer" target="_blank">https://github.com/Microsoft/vscode-extension-samples</a></li>
+</ul>
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/extension/">extension</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/vscode/">vscode</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/01/18/javascriptflow/" data-tooltip="자바스크립트 비동기 처리 과정과 RxJS Scheduler" aria-label="PREVIOUS: 자바스크립트 비동기 처리 과정과 RxJS Scheduler">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/11/21/wrappingReact/" data-tooltip="React로 레거시(?) 코드 랩핑하기" aria-label="NEXT: React로 레거시(?) 코드 랩핑하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/12/27/createvsextension/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/12/27/createvsextension/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/01/18/javascriptflow/" data-tooltip="자바스크립트 비동기 처리 과정과 RxJS Scheduler" aria-label="PREVIOUS: 자바스크립트 비동기 처리 과정과 RxJS Scheduler">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/11/21/wrappingReact/" data-tooltip="React로 레거시(?) 코드 랩핑하기" aria-label="NEXT: React로 레거시(?) 코드 랩핑하기">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/12/27/createvsextension/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/12/27/createvsextension/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/12/27/createvsextension/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/12/27/createvsextension/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2017/12/27/createvsextension/';
+                 
+                    this.page.identifier = '2017/12/27/createvsextension/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>

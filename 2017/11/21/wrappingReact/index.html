@@ -1,0 +1,808 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        React로 레거시(?) 코드 랩핑하기 - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2017/11/21/wrappingreact/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"기존에 작성한 또는 DOM 기반으로 작성한 코드를 React나 Angular, Vue와 같은 프레임워크에서 사용하고 싶은 경우가 많다.물론, 기존 코드의 내용은 하나도 안고치고 사용하고자 한다.그래서 일반적으로 기존 코드를 사용하는(랩핑) 프레임워크의 컴포넌트를 만들게 된다.\nJQuery plugin을 React로 랩핑하는 것은 아티클에 나온 것 처럼 의외로 간단하다.하지만, DOM을 주무르듯이 계속 만져(?)주는 컴포넌트인 경우는 처음부터 상태기반으로 컴포넌트를 설계하지 않는 이상 React/Angular/Vue에 맞는 컴포넌트를 맞추는 것은 쉽지 않다.생각 같아서는 native한 코드를 작성해서 사용하고,이를 각 프레임워크 스타일로 랩핑만 하면 간단히 될거라고 생각했는데 만들고 보니 꽤나 부자연스러웠다.\n내가 주로 만들고 있는 것들이 UI 컴포넌트인데 복잡한 UI 컴포넌트는 사실 프레임워크와 엮는게 쉽지 않다.지금 작업하고 있는게 InfiniteGrid라는 컴포넌트이다.이 컴포넌트는 꽤나 빈번하게 DOM을 조작하고 내부적으로 상태를 관리하고 있기 때문에 더욱 그러한 것 같다.이것과 관련해서 했던 삽질과 약간의 꽁수를 찾게 되어 몇자 끄적여 본다.\n\n\nInfiniteGrid사용자가 스크롤을 계속 할수록 컨텐츠는 무한으로 추가되고,DOM의 개수는 화면사이즈에 맞게 동적으로 DOM을 제거하는 모듈이다.한 마디로 DOM 밑장 빼기 기술이다. 이론은 간단하지만, 실제로는 고민할 거리가 꽤 많다.더군다나 InfiniteGrid는 카드를 다양한 형태로 배치가 가능하니 더 복잡하다.하지만 이 글은 이에 대한 내용이 아니니 과감히 생략하고 본론으로 이야기해보자.\n이 컴포넌트의 형태는 다음과 같다.\n123456789// 특정 엘리먼트 기준으로 인스턴스를 생성한다.const infinite = new InfinieGrid(element, options);// 이벤트를 통해 특정 시점을 전달받는다.infinite.on(\"append\", () =&gt; &#123;&#125;);// 메소드를 통해 제어한다.infinite.setLayout(GridLayout, options);infinite.append(items);\n\n\n메소드를 통해 인스턴스에 데이터를 전달하거나 얻고, 이벤트를 통해 시점을 전달받는다.인스턴스를 생성할 때는 옵션을 받아 제어할 정보를 전달받는다.\n\nReact는 상위컴포넌트에서 하위컴포넌트로 데이터를 prop를 통해 단방향으로 전달하기 때문에 다음과 같이 간단한 형태의 React Component를 만들 수 있다.\n1234567&lt;InfiniteGrid  layout=&#123;&#123; class: GridLayout, options: &#123; margin: 10 &#125; &#125;&#125;  options=&#123;&#123; isOverflowScroll: true &#125;&#125;  onAppend=&#123;this.onAppend.bind(this)&#125;  append=&#123;this.state.items&#125;  // .../&gt;\n\n옵션(options)과 메소드(append), 이벤트(OnAppend) 모두 prop로 전달해주면 된다.이벤트는 핸들러에서 setState를 이용하여 상태를 다시 상위로 전파 시키면 양방향으로 데이터 전달이 가능하다.\n하지만 문제는 React는 prop가 변경되거나 내부 state가 변경되면 다시 그린다(물론 비교는 한다)는 것이다.애써 DOM을 순환형태로 구성하면 다시 그려버리는 것이다. ㅠㅠ\n첫번째 꽁수! React. DOM 처리는 내가할께.React 컴포넌트는 라이프 사이클이 있어서 초기에 render 함수가 호출 된 이후, prop나 state가 변경되면 shouldComponentUpdate가 발생하고 그 반환값이 true이면 render를 호출한다.\n\n\n이렇게 DOM을 React Component가 아닌 내부(egjs의 infiniteGrid)에서 다룬다면, shouldComponentUpdate의 반환값을 false로 바꾸면 초기 로딩 이후 render를 호출하지 않는다.\n123shouldComponentUpdate() &#123;  return false;&#125;\n\nReact는 껍데기일뿐 DOM을 그리는 것은 infiniteGrid가 직접 그리게 된다.으하하하~!\n두번째 꽁수! React 컴포넌트도 마크업으로 뿅!native로 작성한 infiniteGrid 코드에서는 append나 prepend를 이용하여 HTML string이나 HTMLElement 배열, 또는 jQuery 인스턴스를 데이터로 받는다.https://naver.github.io/egjs-infinitegrid/release/latest/doc/eg.InfiniteGrid.html#append\n1infnite.append([\"&lt;div&gt;아이템1&lt;/div&gt;\", \"&lt;div&gt;아이템2&lt;/div&gt;\"]);\n\n하지만, React에서는 가급적이면 React 컴포넌트를 아이템으로 받고자 한다.React 컴포넌트를 아이템으로 사용하기 위해서는 내부 코드를 바꾸고 React 컴포넌트 여부를 파악 후에 별도로 render를 부르고, 어쩌고 저쩌고 하면…된다.\n그런데 기존 코드를 건드리지 않고 할 수 있는 방법이 있을까?여기서 찾은 두번째 꽁수는 React 컴포넌트를 받아서 string 배열로 만드는 방법이다.가장 쉬운 방법은 ReactDOMServer.renderToStaticMarkup를 이용하여 React 컴포넌트를 string 형태로 만들 수 있다.\n1const stringInArray = items.map(v =&gt; ReactDOMServer.renderToStaticMarkup(v));\n\n야호! 이제 React 컴포넌트도 사용할수 있게 되었다.\n랩핑의 한계껍데기만 React 컴포넌트인 아이템들하지만. 이렇게 만들면 문제는 ReactDOMServer.renderToStaticMarkup 함수에 의해 변경된 React 컴포넌트는 string으로만 변경되기 때문에 해당 React 컴포넌트에서 처리한 이벤트 핸들러 같은 것은 사라져 버린다. ㅠㅠ실무에서는 아이템 상위 요소인 InfiniteGrid에 click 이벤트를 delegate해서 처리하긴 했지만…꽤나 찝찝하다. 쩝쩝.\n내부에서 상태관리를 하는 경우라면… 뭐… 방법이 없네.앞에서 DOM 관리를 native infiniteGrid에서 하기 위해서는 shouldComponentUpdate로 render를 제어 할수 있다.하지만, 내부에서 상태관리를 하는 경우에 대해서는 마땅한 방법이 없다.native infiniteGrid도 내부에서 자체적으로 2개의 상태를 관리한다. 실제 리스트의 내용과 화면에 보여지는 일정한 개수의 리스트를 가지고 있다. 이를 고치려면 근본적으로 infiniteGrid의 상태를 외부에서 주입하는 방식으로 변경해야만 한다.infiniteGrid와 같이 append, prepend와 같은 메소드가 아니라 항상 상태에 따라 데이터가 변경될 수 있도록 변경해야한다.그렇지 않는다면, 궁극적으로 상태는 React로 랩핑한 컴포넌트와 랩핑된 native 컴포넌트 둘 다 가지고 있게 될 뿐만아니라 상태 변경 상태에 대한 별도의 sync 작업도 해주어야한다.\n만약 상태값을 전달하지 않고 append/prepnd와 같은 메소드의 인자로 데이터를 전달하는 방식으로 개발을 한다면 외부에서 변경여부에 따라 변경된 부분(추가할거나 삭제할것)을 구분해서 랩핑한 react 컴포넌트에 전달해야만 한다.react스럽지 않은 부자연스러움이 아주 많~이 느껴진다 ㅠㅠ\n1234567componentWillReceiveProps(&#123;append&#125;) &#123;  // ...  // 랩핑된 컴포넌트의 append prop로 변경될(추가될) 아이템만을 넘겨주어야한다.  const elements = append.map(v =&gt; ReactDOMServer.renderToStaticMarkup(v));  this._instance.append(elements);  // ...&#125;\n\n결론이 글을 쓴 진짜 이유는 나같은 사람이 발생하지 않길 바라는 의미이다.기존의 DOM 제어 방식의 개발을 단순히 스타일만 바꾼다고 각 프레임워크에 맞는 컴포넌트가 되지는 않는다.간단한 기능이라면 위에서 언급한 꽁수 들로 랩핑만으로 충분하겠지만.꽁수는 꽁수일뿐. 해결책은 아니다.\n내부적으로 상태를 관리하는 native 컴포넌트라면 랩핑보다는 state에 적합한 구조로 재개발을 하는게 장기적으로 더 좋은 결과를 얻을수 있을것 같다.\n참고: 개인적으로는 Angular를 기반으로 이야기하고 싶지만, 현실은 React를 더 많이 사용하기에 React를 만들게 되었다. 내가 React를 만들면서 이런 고민을 하게 될 줄이야. ㅜㅜ\n사실 React나 Angular나 Vue나 기능적인 면에서는 다 거기서 거기다. (사실 vue는 잘모름)모두 상태 기반을 지향하기 때문에 만들어가는 방식도 유사하고 데이터 흐름제어도 유사하다.따라서 이 글에서는 React를 기준으로 이야기했지만 다른 프레임워크의 랩핑 컴포넌트를 만들때도 비슷한 고민을 하게된다. 또한 처리 방식도 비슷하다.\n\n","dateCreated":"2017-11-21T23:41:50+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2017-11-21T23:41:50+09:00","description":"기존에 작성한 또는 DOM 기반으로 작성한 코드를 React나 Angular, Vue와 같은 프레임워크에서 사용하고 싶은 경우가 많다.물론, 기존 코드의 내용은 하나도 안고치고 사용하고자 한다.그래서 일반적으로 기존 코드를 사용하는(랩핑) 프레임워크의 컴포넌트를 만들게 된다.\nJQuery plugin을 React로 랩핑하는 것은 아티클에 나온 것 처럼 의외로 간단하다.하지만, DOM을 주무르듯이 계속 만져(?)주는 컴포넌트인 경우는 처음부터 상태기반으로 컴포넌트를 설계하지 않는 이상 React/Angular/Vue에 맞는 컴포넌트를 맞추는 것은 쉽지 않다.생각 같아서는 native한 코드를 작성해서 사용하고,이를 각 프레임워크 스타일로 랩핑만 하면 간단히 될거라고 생각했는데 만들고 보니 꽤나 부자연스러웠다.\n내가 주로 만들고 있는 것들이 UI 컴포넌트인데 복잡한 UI 컴포넌트는 사실 프레임워크와 엮는게 쉽지 않다.지금 작업하고 있는게 InfiniteGrid라는 컴포넌트이다.이 컴포넌트는 꽤나 빈번하게 DOM을 조작하고 내부적으로 상태를 관리하고 있기 때문에 더욱 그러한 것 같다.이것과 관련해서 했던 삽질과 약간의 꽁수를 찾게 되어 몇자 끄적여 본다.","headline":"React로 레거시(?) 코드 랩핑하기","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2017/11/21/wrappingReact/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2017/11/21/wrappingReact/","keywords":"react, egjs, legacy, infinitegrid, wrapping"}</script>
+    <meta name="description" content="기존에 작성한 또는 DOM 기반으로 작성한 코드를 React나 Angular, Vue와 같은 프레임워크에서 사용하고 싶은 경우가 많다.물론, 기존 코드의 내용은 하나도 안고치고 사용하고자 한다.그래서 일반적으로 기존 코드를 사용하는(랩핑) 프레임워크의 컴포넌트를 만들게 된다. JQuery plugin을 React로 랩핑하는 것은 아티클에 나온 것 처럼 의외">
+<meta name="keywords" content="react,egjs,legacy,infinitegrid,wrapping">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="React로 레거시(?) 코드 랩핑하기">
+<meta property="og:url" content="http://sculove.github.io/blog/2017/11/21/wrappingReact/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="기존에 작성한 또는 DOM 기반으로 작성한 코드를 React나 Angular, Vue와 같은 프레임워크에서 사용하고 싶은 경우가 많다.물론, 기존 코드의 내용은 하나도 안고치고 사용하고자 한다.그래서 일반적으로 기존 코드를 사용하는(랩핑) 프레임워크의 컴포넌트를 만들게 된다. JQuery plugin을 React로 랩핑하는 것은 아티클에 나온 것 처럼 의외">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/11/21/wrappingReact/react-lifecycle.png">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React로 레거시(?) 코드 랩핑하기">
+<meta name="twitter:description" content="기존에 작성한 또는 DOM 기반으로 작성한 코드를 React나 Angular, Vue와 같은 프레임워크에서 사용하고 싶은 경우가 많다.물론, 기존 코드의 내용은 하나도 안고치고 사용하고자 한다.그래서 일반적으로 기존 코드를 사용하는(랩핑) 프레임워크의 컴포넌트를 만들게 된다. JQuery plugin을 React로 랩핑하는 것은 아티클에 나온 것 처럼 의외">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2017/11/21/wrappingReact/react-lifecycle.png">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            React로 레거시(?) 코드 랩핑하기
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-11-21T23:41:50+09:00">
+	
+		    Nov 21, 2017
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Tech/">Tech</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>기존에 작성한 또는 DOM 기반으로 작성한 코드를 React나 Angular, Vue와 같은 프레임워크에서 사용하고 싶은 경우가 많다.<br>물론, <code>기존 코드의 내용은 하나도 안고치고 사용하고자 한다.</code><br>그래서 일반적으로 기존 코드를 사용하는(랩핑) 프레임워크의 컴포넌트를 만들게 된다.</p>
+<p>JQuery plugin을 React로 랩핑하는 것은 <a href="http://tech.oyster.com/using-react-and-jquery-together/" rel="external nofollow noopener noreferrer" target="_blank">아티클</a>에 나온 것 처럼 의외로 간단하다.<br>하지만, DOM을 주무르듯이 계속 만져(?)주는 컴포넌트인 경우는 처음부터 상태기반으로 컴포넌트를 설계하지 않는 이상 React/Angular/Vue에 맞는 컴포넌트를 맞추는 것은 쉽지 않다.<br>생각 같아서는 native한 코드를 작성해서 사용하고,<br>이를 각 프레임워크 스타일로 랩핑만 하면 간단히 될거라고 생각했는데 만들고 보니 꽤나 부자연스러웠다.</p>
+<p>내가 주로 만들고 있는 것들이 UI 컴포넌트인데 복잡한 UI 컴포넌트는 사실 프레임워크와 엮는게 쉽지 않다.<br>지금 작업하고 있는게 <a href="https://github.com/naver/egjs-infinitegrid" rel="external nofollow noopener noreferrer" target="_blank">InfiniteGrid</a>라는 컴포넌트이다.<br>이 컴포넌트는 꽤나 빈번하게 DOM을 조작하고 내부적으로 상태를 관리하고 있기 때문에 더욱 그러한 것 같다.<br>이것과 관련해서 했던 <code>삽질</code>과 약간의 <code>꽁수</code>를 찾게 되어 몇자 끄적여 본다.</p>
+<a id="more"></a>
+
+<h2 id="InfiniteGrid"><a href="#InfiniteGrid" class="headerlink" title="InfiniteGrid"></a>InfiniteGrid</h2><p>사용자가 스크롤을 계속 할수록 컨텐츠는 무한으로 추가되고,<br>DOM의 개수는 화면사이즈에 맞게 동적으로 DOM을 제거하는 모듈이다.<br>한 마디로 <code>DOM 밑장 빼기</code> 기술이다. 이론은 간단하지만, 실제로는 고민할 거리가 꽤 많다.<br>더군다나 InfiniteGrid는 카드를 다양한 형태로 배치가 가능하니 더 복잡하다.<br>하지만 이 글은 이에 대한 내용이 아니니 과감히 생략하고 본론으로 이야기해보자.</p>
+<p>이 컴포넌트의 형태는 다음과 같다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 특정 엘리먼트 기준으로 인스턴스를 생성한다.</span></span><br><span class="line"><span class="keyword">const</span> infinite = <span class="keyword">new</span> InfinieGrid(element, options);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 이벤트를 통해 특정 시점을 전달받는다.</span></span><br><span class="line">infinite.on(<span class="string">"append"</span>, () =&gt; &#123;&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 메소드를 통해 제어한다.</span></span><br><span class="line">infinite.setLayout(GridLayout, options);</span><br><span class="line">infinite.append(items);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>메소드를 통해 인스턴스에 데이터를 전달하거나 얻고, 이벤트를 통해 시점을 전달받는다.<br>인스턴스를 생성할 때는 옵션을 받아 제어할 정보를 전달받는다.</p>
+</blockquote>
+<p>React는 상위컴포넌트에서 하위컴포넌트로 데이터를 prop를 통해 단방향으로 전달하기 때문에 다음과 같이 간단한 형태의 React Component를 만들 수 있다.</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;InfiniteGrid</span><br><span class="line">  layout=&#123;&#123; <span class="attr">class</span>: GridLayout, <span class="attr">options</span>: &#123; <span class="attr">margin</span>: <span class="number">10</span> &#125; &#125;&#125;</span><br><span class="line">  options=&#123;&#123; <span class="attr">isOverflowScroll</span>: <span class="literal">true</span> &#125;&#125;</span><br><span class="line">  onAppend=&#123;<span class="keyword">this</span>.onAppend.bind(<span class="keyword">this</span>)&#125;</span><br><span class="line">  append=&#123;<span class="keyword">this</span>.state.items&#125;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">/&gt;</span><br></pre></td></tr></table></figure>
+
+<p>옵션(options)과 메소드(append), 이벤트(OnAppend) 모두 prop로 전달해주면 된다.<br>이벤트는 핸들러에서 <code>setState</code>를 이용하여 상태를 다시 상위로 전파 시키면 양방향으로 데이터 전달이 가능하다.</p>
+<p>하지만 문제는 React는 prop가 변경되거나 내부 state가 변경되면 <code>다시 그린다(물론 비교는 한다)</code>는 것이다.<br>애써 DOM을 순환형태로 구성하면 다시 그려버리는 것이다. ㅠㅠ</p>
+<h3 id="첫번째-꽁수-React-DOM-처리는-내가할께"><a href="#첫번째-꽁수-React-DOM-처리는-내가할께" class="headerlink" title="첫번째 꽁수! React. DOM 처리는 내가할께."></a>첫번째 꽁수! React. DOM 처리는 내가할께.</h3><p>React 컴포넌트는 라이프 사이클이 있어서 초기에 render 함수가 호출 된 이후, prop나 state가 변경되면 shouldComponentUpdate가 발생하고 그 반환값이 <code>true</code>이면 render를 호출한다.</p>
+<img src="/blog/2017/11/21/wrappingReact/react-lifecycle.png">
+
+<p>이렇게 DOM을 React Component가 아닌 내부(egjs의 infiniteGrid)에서 다룬다면, shouldComponentUpdate의 반환값을 <code>false</code>로 바꾸면 초기 로딩 이후 render를 호출하지 않는다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shouldComponentUpdate() &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>React는 껍데기일뿐 DOM을 그리는 것은 infiniteGrid가 직접 그리게 된다.<br>으하하하~!</p>
+<h3 id="두번째-꽁수-React-컴포넌트도-마크업으로-뿅"><a href="#두번째-꽁수-React-컴포넌트도-마크업으로-뿅" class="headerlink" title="두번째 꽁수! React 컴포넌트도 마크업으로 뿅!"></a>두번째 꽁수! React 컴포넌트도 마크업으로 뿅!</h3><p>native로 작성한 infiniteGrid 코드에서는 append나 prepend를 이용하여 <code>HTML string</code>이나 <code>HTMLElement 배열</code>, 또는 <code>jQuery 인스턴스</code>를 데이터로 받는다.<br><a href="https://naver.github.io/egjs-infinitegrid/release/latest/doc/eg.InfiniteGrid.html#append" rel="external nofollow noopener noreferrer" target="_blank">https://naver.github.io/egjs-infinitegrid/release/latest/doc/eg.InfiniteGrid.html#append</a></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">infnite.append([<span class="string">"&lt;div&gt;아이템1&lt;/div&gt;"</span>, <span class="string">"&lt;div&gt;아이템2&lt;/div&gt;"</span>]);</span><br></pre></td></tr></table></figure>
+
+<p>하지만, React에서는 가급적이면 React 컴포넌트를 아이템으로 받고자 한다.<br>React 컴포넌트를 아이템으로 사용하기 위해서는 내부 코드를 바꾸고 React 컴포넌트 여부를 파악 후에 별도로 render를 부르고, 어쩌고 저쩌고 하면…된다.</p>
+<h4 id="그런데-기존-코드를-건드리지-않고-할-수-있는-방법이-있을까"><a href="#그런데-기존-코드를-건드리지-않고-할-수-있는-방법이-있을까" class="headerlink" title="그런데 기존 코드를 건드리지 않고 할 수 있는 방법이 있을까?"></a>그런데 기존 코드를 건드리지 않고 할 수 있는 방법이 있을까?</h4><p>여기서 찾은 두번째 꽁수는 React 컴포넌트를 받아서 <code>string 배열</code>로 만드는 방법이다.<br>가장 쉬운 방법은 <a href="https://reactjs.org/docs/react-dom-server.html#rendertostaticmarkup" rel="external nofollow noopener noreferrer" target="_blank">ReactDOMServer.renderToStaticMarkup</a>를 이용하여 React 컴포넌트를 string 형태로 만들 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> stringInArray = items.map(<span class="function"><span class="params">v</span> =&gt;</span> ReactDOMServer.renderToStaticMarkup(v));</span><br></pre></td></tr></table></figure>
+
+<p>야호! 이제 React 컴포넌트도 사용할수 있게 되었다.</p>
+<h3 id="랩핑의-한계"><a href="#랩핑의-한계" class="headerlink" title="랩핑의 한계"></a>랩핑의 한계</h3><h4 id="껍데기만-React-컴포넌트인-아이템들"><a href="#껍데기만-React-컴포넌트인-아이템들" class="headerlink" title="껍데기만 React 컴포넌트인 아이템들"></a>껍데기만 React 컴포넌트인 아이템들</h4><p>하지만. 이렇게 만들면 문제는 <code>ReactDOMServer.renderToStaticMarkup</code> 함수에 의해 변경된 React 컴포넌트는 string으로만 변경되기 때문에 해당 React 컴포넌트에서 처리한 이벤트 핸들러 같은 것은 사라져 버린다. ㅠㅠ<br>실무에서는 아이템 상위 요소인 InfiniteGrid에 click 이벤트를 delegate해서 처리하긴 했지만…<br>꽤나 찝찝하다. 쩝쩝.</p>
+<h4 id="내부에서-상태관리를-하는-경우라면…-뭐…-방법이-없네"><a href="#내부에서-상태관리를-하는-경우라면…-뭐…-방법이-없네" class="headerlink" title="내부에서 상태관리를 하는 경우라면… 뭐… 방법이 없네."></a>내부에서 상태관리를 하는 경우라면… 뭐… 방법이 없네.</h4><p>앞에서 DOM 관리를 native infiniteGrid에서 하기 위해서는 shouldComponentUpdate로 render를 제어 할수 있다.<br>하지만, <code>내부에서 상태관리를 하는 경우에 대해서는 마땅한 방법이 없다.</code><br>native infiniteGrid도 내부에서 자체적으로 2개의 상태를 관리한다. 실제 리스트의 내용과 화면에 보여지는 일정한 개수의 리스트를 가지고 있다. 이를 고치려면 근본적으로 infiniteGrid의 상태를 외부에서 주입하는 방식으로 변경해야만 한다.<br>infiniteGrid와 같이 append, prepend와 같은 메소드가 아니라 항상 상태에 따라 데이터가 변경될 수 있도록 변경해야한다.<br>그렇지 않는다면, 궁극적으로 상태는 React로 랩핑한 컴포넌트와 랩핑된 native 컴포넌트 둘 다 가지고 있게 될 뿐만아니라 상태 변경 상태에 대한 별도의 sync 작업도 해주어야한다.</p>
+<p>만약 상태값을 전달하지 않고 append/prepnd와 같은 메소드의 인자로 데이터를 전달하는 방식으로 개발을 한다면 <code>외부에서 변경여부에 따라 변경된 부분(추가할거나 삭제할것)을 구분해서 랩핑한 react 컴포넌트에 전달해야만 한다.</code><br>react스럽지 않은 부자연스러움이 아주 많~이 느껴진다 ㅠㅠ</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">componentWillReceiveProps(&#123;append&#125;) &#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="comment">// 랩핑된 컴포넌트의 append prop로 변경될(추가될) 아이템만을 넘겨주어야한다.</span></span><br><span class="line">  <span class="keyword">const</span> elements = append.map(<span class="function"><span class="params">v</span> =&gt;</span> ReactDOMServer.renderToStaticMarkup(v));</span><br><span class="line">  <span class="keyword">this</span>._instance.append(elements);</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="결론"><a href="#결론" class="headerlink" title="결론"></a>결론</h3><p>이 글을 쓴 진짜 이유는 나같은 사람이 발생하지 않길 바라는 의미이다.<br>기존의 DOM 제어 방식의 개발을 단순히 스타일만 바꾼다고 각 프레임워크에 맞는 컴포넌트가 되지는 않는다.<br>간단한 기능이라면 위에서 언급한 <code>꽁수</code> 들로 랩핑만으로 충분하겠지만.<br>꽁수는 꽁수일뿐. 해결책은 아니다.</p>
+<h4 id="내부적으로-상태를-관리하는-native-컴포넌트라면-랩핑보다는-state에-적합한-구조로-재개발을-하는게-장기적으로-더-좋은-결과를-얻을수-있을것-같다"><a href="#내부적으로-상태를-관리하는-native-컴포넌트라면-랩핑보다는-state에-적합한-구조로-재개발을-하는게-장기적으로-더-좋은-결과를-얻을수-있을것-같다" class="headerlink" title="내부적으로 상태를 관리하는 native 컴포넌트라면 랩핑보다는 state에 적합한 구조로 재개발을 하는게 장기적으로 더 좋은 결과를 얻을수 있을것 같다."></a>내부적으로 상태를 관리하는 native 컴포넌트라면 랩핑보다는 state에 적합한 구조로 재개발을 하는게 장기적으로 더 좋은 결과를 얻을수 있을것 같다.</h4><blockquote>
+<p>참고: 개인적으로는 Angular를 기반으로 이야기하고 싶지만, 현실은 React를 더 많이 사용하기에 React를 만들게 되었다. 내가 React를 만들면서 이런 고민을 하게 될 줄이야. ㅜㅜ</p>
+<p>사실 React나 Angular나 Vue나 기능적인 면에서는 다 거기서 거기다. (사실 vue는 잘모름)<br>모두 <code>상태 기반</code>을 지향하기 때문에 만들어가는 방식도 유사하고 데이터 흐름제어도 유사하다.<br>따라서 이 글에서는 React를 기준으로 이야기했지만 다른 프레임워크의 랩핑 컴포넌트를 만들때도 비슷한 고민을 하게된다. 또한 처리 방식도 비슷하다.</p>
+</blockquote>
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/egjs/">egjs</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/infinitegrid/">infinitegrid</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/legacy/">legacy</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/react/">react</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/wrapping/">wrapping</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/12/27/createvsextension/" data-tooltip="VSCODE Extension 만든 삽질기" aria-label="PREVIOUS: VSCODE Extension 만든 삽질기">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/21/shoulduserxjs/" data-tooltip="RxJS 써야겠어요? 안써야겠어요?" aria-label="NEXT: RxJS 써야겠어요? 안써야겠어요?">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/11/21/wrappingReact/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/11/21/wrappingReact/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/12/27/createvsextension/" data-tooltip="VSCODE Extension 만든 삽질기" aria-label="PREVIOUS: VSCODE Extension 만든 삽질기">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/21/shoulduserxjs/" data-tooltip="RxJS 써야겠어요? 안써야겠어요?" aria-label="NEXT: RxJS 써야겠어요? 안써야겠어요?">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/11/21/wrappingReact/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/11/21/wrappingReact/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/11/21/wrappingReact/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/11/21/wrappingReact/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2017/11/21/wrappingReact/';
+                 
+                    this.page.identifier = '2017/11/21/wrappingReact/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>

@@ -1,0 +1,842 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        오브젝트 책에 대한 잡담 - 1 - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2019/07/31/object-book1/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"개인적으로 개발을 하면서 꼭 필요한 것 중의 하나가 개발에 대한 경험이고, 또 다른 하나가 그 경험을 통한 사고의 정리와 확장에 있다. 개발경력은 단지 숫자에 불과할 뿐이다. 그 시간동안 얼마나 다양한 경험과 깊은 고민을 했는지가 현재 자신의 개발 역량을 만들어 간다.\n하지만, 어디 개발 뿐이겠는가? ㅋㅋ\n물론, 천재적인(?) 감각과 통찰력으로 책 만보고도 잘하는 사람도 드물게 있긴 하다. 하지만 나 같은 범인들은 당하지 않고는 느끼지 못하고, 고민하지 않으면 통찰력을 얻을 수 없다.\n그래서 마침 좋은 책도 나오고 해서 FE개발 좀 했다는 노친네(?) 분들과 오브젝트 책으로 생각을 정리할 목적으로 스터디를 시작했다.\n스터디라고해서 뭐 거창한 것은 아니고 그냥 책을 읽어와서 이런 저런 잡담을 주기적으로 하는 시간을 갖기로 했다.\n오늘은 그 첫번째로 이 책의 1~2장에 대한 내용을 토대로 이야기했던 내용. 그리고 내 생각들의 정리를 위한 기록들이다.\n\n\n\n\n객체 지향 프로그래밍 이야기프로그래밍을 개인적으로 제대로 학습해 본 것은 C++로 쓰여진 객체지향프로그래밍  책이었다. 주황색(?)과 파란색(?)의 표지의 책으로 기억된다… 문법부터 나온 책이었는데 그때 배운 내용을 바탕으로 아직까지도 잘 써먹고(?) 있다. 누가 가르쳐 주는 것도 아니고 개발로 뭔가를 해본 것도 아니기에 난해하고 이해하기 어려워서 몇 번을 반복해서 본 기억이 있다. \n\n\n이게 “상속”이구나 이게 “클래스”하고 “인터페이스” 구나 하는 정도의 이해 수준을 가지고 나름 다 배웠다는 교만함으로 살았던 기억이 난다. \n\n\n그 이후로 아마도 처음보는 객체지향 프로그래밍 관련 책 같다.\n이 책은 시작부터 프로그래밍 패러다임에 대한 용어를 다룬다. 작년에 쓴 내 책에서는 다양한 패러다임(반응형/함수형 프로그래밍 패러다임)이 나오는 내용 임에도 불구하고 미처 다루지 못했던 내용을 이 책에서는 아주 잘 다루고 있다.(왜 이렇게 풀지 못했지… 라는 생각에 부끄러움이 밀려왔다. 하하하)\n이후 소프트웨어 모듈의 목적에 대해 기술하고 있다. 이걸 보고 초등학교때 ‘인사 잘해라’는 선생님의 가르침을 잊은 것 처럼 얼굴이 화끈거렸다.\n\n소프트웨어 모듈은 \n첫째. 제대로 동작해야하고둘째. 변경을 위해 존재해야하며셋째. 가독성이 좋아야한다.\n\n간혹 우리는 두번째 목적을 잊어버린다. 왜?이 스펙이 크게 변경될 일은 현실적으로 우리가 예측가능한 범위에서 많이 일어나지 않을뿐만아니라 그런것을 고려하면서 개발하기에는 일정이 너무 짧기때문에 오히려 첫번째와 세번째 이유에 더 초점을 맞추게 된다.\n하긴 두번째 이유 때문에 객체지향이니 함수형이니 반응형이니 하는 프로그래밍 패러다임을 배우고, 테스트 코드를 짜놓고 변경에 대비하고 있는데… 현업 개발을 하다보면 이걸 명료하게(?) 잊어버린다.\n어찌보면 경험이 쌓이면서 변경을 대비하기 위한 코딩의 기술(?)들이 이미 녹아들어 갔기 때문일 수도 있다. 그냥 ‘그렇게 짜는게 좋다’라는 감(?)만이 남아 있게된다. \n이 책의 1~2장 까지는 객체지향 프로그래밍의 개념을 왜? 라는 관점에서 예제와 함께 비교적 쉽게 설명하고 있다. 하지만 역시나조금은 지루한 내용이고, 초보자들이 이해하기 어려운 내용이다. \n뭐 핵심만 이야기한다면 아래같이 간단히 나타낼 수도 있다.\n\n의존성이 있다 === 변경이 될 수 있다. \nSo, 결합도를 낮춘다. \nHow? \n\n캡슐화를 통해 내,외부의 경계를 명확히하여 자율성을 보장하여 의존성을 줄인다. \n구현과 인터페이스로 나눠서 인터페이스로만 메시지를 주고받는다\n객체에 책임을 주어 할당하여 자율적으로 처리하도록 하자. 이로 인해 응집도를 높인다.\n\n\n위 기본적인 개념을 바탕으로 어떻게 코드를 개선해 나가는지를 설명하고 있다.\n상속위 방식을 효과적으로 해결하기 위한 객체지향 프로그래밍의 방법 중 하나로 상속이 나오고, 이로 인한 추상화와 다형성 이야기가 나온다. 이런 개념은 인터넷을 잘 찾으렴 나오니깐 과감히 생략하고. 우리가 잘못 사용(?) 하고 있는 상속에 대한 이야기를 좀 해보자.\nFE개발 좀 했다는 노친네(?) 분들과도 이 상속이 논의의 중심이 되었다.\n이 상속이라는게 어떻게 보면 참 편리하다. 부모를 그대로 쏙 닮은 자식을 아주 손쉽게 만들수 있기 때문이다. \n왜냐면 내 중복코드가 정말 기가 막히게 사라지기 때문이다. 유지보수도 더 편한 것 같고, 뭔가 테크닉으로 노가대를 없앴다는 프로그래머로서의 뿌듯함도 생긴다.\n잘못된 상속의 폐해실제로 내가 겪은 개발 사례로 이야기해보자. UI 대표적인 컴포넌트로 캐로셀과 스크롤이 있다.\n둘다 사용자의 액션을 받아서 UI를 움직이는 동일한 기능을 담당한다. 다만 다른 것은 캐로셀은 별도의 인덱스가 있어서 사용자의 액션에 따라 한 판씩 이동하는 것에 비해 스크롤은 모두 동일하지만 사용자의 액션에 의해 스크롤되는 UI 컴포넌트이다.\n인덱스 기능을 빼면 사실 둘 다 같다. 그럼 동일한 기능이니깐 공통 사용자 액션을 바탕으로 상속해서 요렇게 하면 좋겠다라는 유혹(?)이 시작된다. 여기까지는 사실 괜찮다.\n관여하는 모듈도 많지도 않고 나름 나쁘지 않다. 하지만 이제 요구사항이 늘면서 우린 헬게이트로 빠지게 된다.\n캐로셀의 이동 모양만 변경한 여러 종류의 캐로셀을 만드는 요구사항이 추가되었다.\nCarousel을 상속함으로써 이동 모양에 대한 부분만 overriding 하면, SlideCarousel, PreviewCarousel, CubeCarousel 등 다양한 캐로셀을 손쉽게 만들 수 있었다. 이때는 참 뿌듯했다. 몇 줄 안되는 코드로 다양한 요구사항을 손쉽게 해결했으니 ㅋㅋㅋ\n하지만 문제는 여기서 부터였다. 여러 종류의 캐로셀마다 다양한 요구사항들이 추가되었고 이로 인해 하위에 있는 XXXCarousel이 변경되었고, 이로 인해 오히려 상위의 컴포넌트도 변경을 해야하는 상황이 도래했다.\n코드는 줄었지만. 변경시 마다 상위 모듈이 함께 변경 될 소지가 있었고 각각의 역할은 자율성을 갖지 못하고 영향을 미치게되었다. 가장 미치게 하는 것은 코드는 짧아졌지만 상위 모듈을 다 이해하지 않은 이상 코드의 변경이 어려워졌다.\n이때 했던 실수를 이 책에서는 명확하게 집혀주고 있다.\n\n상속은 구현 상속이 아니라 인터페이스 상속을 위해 사용해야 한다.\n\n이를 구현의 재사용성 관점으로 접근하면 나와 같은 경험을 할 수 있다. 하지만 인터페이스 상속. 즉, 다형성을 이용하기 위한 인터페이스 상속은 좋은 결과를 낳는다. 물론, 구현 자체를 공유할 필요가 없는 경우라면 인터페이스만을 사용하는 것이 훨~씬 유연한 구조를 가져갈 수 있다.\n위에서 예시로 든 캐로셀과 스크롤의 경우에는 1차적으로는 사용자 액션 부분을 모듈화 하여 자율성을 부여한 후, 이를 캐로셀이나 스크롤에서 사용하는 사용자 액션을 사용하는 합성 방법이 더 효과적이다.\n다음으로 다양한 종류의 캐로셀의 경우, 캐로셀의 구현체를 공유할 필요가 없다면 인터페이스로 추상화 를 하고 그렇지 않고 구현체를 일부 공유해야한다면  상속을 이용하여 템플릿 메소드 패턴을 고려하는 것도 좋은 방법이다.\n\n\n\n인터페이스와 상속J2EE로 구현된 모듈들을 보면 많은 상속된 객체를 사용하고 있고 사용자에게는 대체로 인터페이스 구현 형태를 제시하고 있다. \n개발을 처음 시작할 때는 인터페이스를 보면서 이런 생각을 했었다.\n아니 그냥 만들면 될 것을 왜? 굳이 인터페이스를 만들어야 하는가? \n사실 Java개발을 할때 가장 불편하고 짜증났던 것 중에 하나가 이런 중복 코드를 매번 재생성해야하는 것이 사실 좀 불합리해 보였다. 하지만 그 대상이 여러 개라면… 즉 다형성이 필요하다면 이야기는 달라진다. 인터페이스 만한게 없다.\n\n난 이런 메시지를 줄테니 잘 모르겠고 넌 이런 형태의 응답을 줘!\n\n인터페이스 빼고는 의존성이 없다. 규칙만 잘 지키면 된다. 하지만. 상속은 어떠한가?\n상속은 사실 굉장한 강결합이다. 부모의 메소드를 알지 못하면 모르고, 부모가 어떻게 동작하는지에 대한 내용을 모르면 자식의 영향도를 파악하기가 어렵다. 한마디로 일차로 캡슐화 위반이다. 캡슐화 위반은 사실상 의존성의 증대를 의미한다.\n개인적인 생각으로는 극단적이지만 상속은 필요 없다에 한 표를 주고 싶다. 너무 매정하다 싶으면 이렇게 고치고 싶다.\n상속은 최대 한 번이면 족하다. \n상속은 결합도가 높은 패턴이기 때문에 정말 자신이 잘 만들 자신이 있거나 그렇지 않다면 오히려 당신의 퇴근시간을 늦출 수 있는 지름길이 될 수 있다. \n","dateCreated":"2019-07-31T22:33:54+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2019-07-31T22:33:54+09:00","description":"개인적으로 개발을 하면서 꼭 필요한 것 중의 하나가 개발에 대한 경험이고, 또 다른 하나가 그 경험을 통한 사고의 정리와 확장에 있다. 개발경력은 단지 숫자에 불과할 뿐이다. 그 시간동안 얼마나 다양한 경험과 깊은 고민을 했는지가 현재 자신의 개발 역량을 만들어 간다.\n하지만, 어디 개발 뿐이겠는가? ㅋㅋ\n물론, 천재적인(?) 감각과 통찰력으로 책 만보고도 잘하는 사람도 드물게 있긴 하다. 하지만 나 같은 범인들은 당하지 않고는 느끼지 못하고, 고민하지 않으면 통찰력을 얻을 수 없다.\n그래서 마침 좋은 책도 나오고 해서 FE개발 좀 했다는 노친네(?) 분들과 오브젝트 책으로 생각을 정리할 목적으로 스터디를 시작했다.\n스터디라고해서 뭐 거창한 것은 아니고 그냥 책을 읽어와서 이런 저런 잡담을 주기적으로 하는 시간을 갖기로 했다.\n오늘은 그 첫번째로 이 책의 1~2장에 대한 내용을 토대로 이야기했던 내용. 그리고 내 생각들의 정리를 위한 기록들이다.\n","headline":"오브젝트 책에 대한 잡담 - 1","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2019/07/31/object-book1/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2019/07/31/object-book1/","keywords":"book, oop, inheritance"}</script>
+    <meta name="description" content="개인적으로 개발을 하면서 꼭 필요한 것 중의 하나가 개발에 대한 경험이고, 또 다른 하나가 그 경험을 통한 사고의 정리와 확장에 있다. 개발경력은 단지 숫자에 불과할 뿐이다. 그 시간동안 얼마나 다양한 경험과 깊은 고민을 했는지가 현재 자신의 개발 역량을 만들어 간다. 하지만, 어디 개발 뿐이겠는가? ㅋㅋ 물론, 천재적인(?) 감각과 통찰력으로 책 만보고도">
+<meta name="keywords" content="book,oop,inheritance">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="오브젝트 책에 대한 잡담 - 1">
+<meta property="og:url" content="http://sculove.github.io/blog/2019/07/31/object-book1/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="개인적으로 개발을 하면서 꼭 필요한 것 중의 하나가 개발에 대한 경험이고, 또 다른 하나가 그 경험을 통한 사고의 정리와 확장에 있다. 개발경력은 단지 숫자에 불과할 뿐이다. 그 시간동안 얼마나 다양한 경험과 깊은 고민을 했는지가 현재 자신의 개발 역량을 만들어 간다. 하지만, 어디 개발 뿐이겠는가? ㅋㅋ 물론, 천재적인(?) 감각과 통찰력으로 책 만보고도">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2019/07/31/object-book1/object.jpeg">
+<meta property="og:image" content="http://sculove.github.io/blog/2019/07/31/object-book1/book.jpg">
+<meta property="og:image" content="http://sculove.github.io/blog/2019/07/31/object-book1/hahaha.jpg">
+<meta property="og:image" content="http://sculove.github.io/blog/2019/07/31/object-book1/templateMethod.jpeg">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="오브젝트 책에 대한 잡담 - 1">
+<meta name="twitter:description" content="개인적으로 개발을 하면서 꼭 필요한 것 중의 하나가 개발에 대한 경험이고, 또 다른 하나가 그 경험을 통한 사고의 정리와 확장에 있다. 개발경력은 단지 숫자에 불과할 뿐이다. 그 시간동안 얼마나 다양한 경험과 깊은 고민을 했는지가 현재 자신의 개발 역량을 만들어 간다. 하지만, 어디 개발 뿐이겠는가? ㅋㅋ 물론, 천재적인(?) 감각과 통찰력으로 책 만보고도">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2019/07/31/object-book1/object.jpeg">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            오브젝트 책에 대한 잡담 - 1
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-07-31T22:33:54+09:00">
+	
+		    Jul 31, 2019
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Tech/">Tech</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>개인적으로 개발을 하면서 꼭 필요한 것 중의 <strong>하나가 개발에 대한 경험</strong>이고, 또 다른 하나가 그 경험을 통한 <strong>사고의 정리와 확장</strong>에 있다. 개발경력은 단지 숫자에 불과할 뿐이다. 그 시간동안 얼마나 <strong>다양한 경험과 깊은 고민을 했는지</strong>가 현재 자신의 개발 역량을 만들어 간다.</p>
+<p>하지만, 어디 개발 뿐이겠는가? ㅋㅋ</p>
+<p>물론, 천재적인(?) 감각과 통찰력으로 책 만보고도 잘하는 사람도 드물게 있긴 하다. 하지만 나 같은 범인들은 <code>당하지 않고는 느끼지 못하고, 고민하지 않으면 통찰력을 얻을 수 없다.</code></p>
+<p>그래서 마침 좋은 책도 나오고 해서 FE개발 좀 했다는 노친네(?) 분들과 오브젝트 책으로 생각을 정리할 목적으로 스터디를 시작했다.</p>
+<p>스터디라고해서 뭐 거창한 것은 아니고 그냥 책을 읽어와서 이런 저런 잡담을 주기적으로 하는 시간을 갖기로 했다.</p>
+<p>오늘은 그 첫번째로 이 책의 1~2장에 대한 내용을 토대로 이야기했던 내용. 그리고 내 생각들의 정리를 위한 기록들이다.</p>
+<img src="/blog/2019/07/31/object-book1/object.jpeg">
+
+<a id="more"></a>
+
+<h3 id="객체-지향-프로그래밍-이야기"><a href="#객체-지향-프로그래밍-이야기" class="headerlink" title="객체 지향 프로그래밍 이야기"></a>객체 지향 프로그래밍 이야기</h3><p>프로그래밍을 개인적으로 제대로 학습해 본 것은 <code>C++로 쓰여진 객체지향프로그래밍</code>  책이었다. 주황색(?)과 파란색(?)의 표지의 책으로 기억된다… 문법부터 나온 책이었는데 그때 배운 내용을 바탕으로 아직까지도 잘 써먹고(?) 있다. 누가 가르쳐 주는 것도 아니고 개발로 뭔가를 해본 것도 아니기에 난해하고 이해하기 어려워서 몇 번을 반복해서 본 기억이 있다. </p>
+<img src="/blog/2019/07/31/object-book1/book.jpg">
+
+<p>이게 “상속”이구나 이게 “클래스”하고 “인터페이스” 구나 하는 정도의 이해 수준을 가지고 나름 <code>다 배웠다는 교만함</code>으로 살았던 기억이 난다. </p>
+<img src="/blog/2019/07/31/object-book1/hahaha.jpg">
+
+<p>그 이후로 아마도 처음보는 객체지향 프로그래밍 관련 책 같다.</p>
+<p>이 책은 시작부터 <code>프로그래밍 패러다임</code>에 대한 용어를 다룬다. 작년에 쓴 <a href="https://book.naver.com/bookdb/book_detail.nhn?bid=13799611" rel="external nofollow noopener noreferrer" target="_blank">내 책</a>에서는 다양한 패러다임(반응형/함수형 프로그래밍 패러다임)이 나오는 내용 임에도 불구하고 미처 다루지 못했던 내용을 이 책에서는 아주 잘 다루고 있다.<br>(왜 이렇게 풀지 못했지… 라는 생각에 부끄러움이 밀려왔다. 하하하)</p>
+<p>이후 소프트웨어 모듈의 목적에 대해 기술하고 있다. 이걸 보고 초등학교때 ‘인사 잘해라’는 선생님의 가르침을 잊은 것 처럼 얼굴이 화끈거렸다.</p>
+<blockquote>
+<p>소프트웨어 모듈은 </p>
+<p>첫째. 제대로 동작해야하고<br>둘째. 변경을 위해 존재해야하며<br>셋째. 가독성이 좋아야한다.</p>
+</blockquote>
+<h3 id="간혹-우리는-두번째-목적을-잊어버린다-왜"><a href="#간혹-우리는-두번째-목적을-잊어버린다-왜" class="headerlink" title="간혹 우리는 두번째 목적을 잊어버린다. 왜?"></a>간혹 우리는 두번째 목적을 잊어버린다. 왜?</h3><p>이 스펙이 크게 변경될 일은 현실적으로 우리가 예측가능한 범위에서 많이 일어나지 않을뿐만아니라 그런것을 고려하면서 개발하기에는 일정이 너무 짧기때문에 오히려 첫번째와 세번째 이유에 더 초점을 맞추게 된다.</p>
+<p>하긴 두번째 이유 때문에 객체지향이니 함수형이니 반응형이니 하는 프로그래밍 패러다임을 배우고, 테스트 코드를 짜놓고 변경에 대비하고 있는데… 현업 개발을 하다보면 이걸 명료하게(?) 잊어버린다.</p>
+<p>어찌보면 경험이 쌓이면서 변경을 대비하기 위한 코딩의 기술(?)들이 이미 녹아들어 갔기 때문일 수도 있다. 그냥 ‘그렇게 짜는게 좋다’라는 감(?)만이 남아 있게된다. </p>
+<p>이 책의 1~2장 까지는 객체지향 프로그래밍의 개념을 <code>왜?</code> 라는 관점에서 예제와 함께 비교적 쉽게 설명하고 있다. 하지만 역시나조금은 지루한 내용이고, 초보자들이 이해하기 어려운 내용이다. </p>
+<p>뭐 핵심만 이야기한다면 아래같이 간단히 나타낼 수도 있다.</p>
+<blockquote>
+<p>의존성이 있다 === 변경이 될 수 있다. </p>
+<p>So, 결합도를 낮춘다. </p>
+<p>How? </p>
+<ul>
+<li><strong>캡슐화</strong>를 통해 내,외부의 경계를 명확히하여 자율성을 보장하여 의존성을 줄인다. </li>
+<li>구현과 인터페이스로 나눠서 인터페이스로만 메시지를 주고받는다</li>
+<li>객체에 <strong>책임</strong>을 주어 할당하여 <strong>자율적</strong>으로 처리하도록 하자. 이로 인해 응집도를 높인다.</li>
+</ul>
+</blockquote>
+<p>위 기본적인 개념을 바탕으로 어떻게 코드를 개선해 나가는지를 설명하고 있다.</p>
+<h3 id="상속"><a href="#상속" class="headerlink" title="상속"></a>상속</h3><p>위 방식을 효과적으로 해결하기 위한 객체지향 프로그래밍의 방법 중 하나로 상속이 나오고, 이로 인한 추상화와 다형성 이야기가 나온다. 이런 개념은 인터넷을 잘 찾으렴 나오니깐 과감히 생략하고. 우리가 잘못 사용(?) 하고 있는 상속에 대한 이야기를 좀 해보자.</p>
+<p>FE개발 좀 했다는 노친네(?) 분들과도 이 상속이 논의의 중심이 되었다.</p>
+<p>이 상속이라는게 어떻게 보면 참 편리하다. 부모를 그대로 쏙 닮은 자식을 아주 손쉽게 만들수 있기 때문이다. </p>
+<p>왜냐면 내 중복코드가 정말 기가 막히게 사라지기 때문이다. 유지보수도 더 편한 것 같고, 뭔가 테크닉으로 노가대를 없앴다는 프로그래머로서의 뿌듯함도 생긴다.</p>
+<h3 id="잘못된-상속의-폐해"><a href="#잘못된-상속의-폐해" class="headerlink" title="잘못된 상속의 폐해"></a>잘못된 상속의 폐해</h3><p>실제로 내가 겪은 개발 사례로 이야기해보자. UI 대표적인 컴포넌트로 캐로셀과 스크롤이 있다.</p>
+<p>둘다 사용자의 액션을 받아서 UI를 움직이는 동일한 기능을 담당한다. 다만 다른 것은 캐로셀은 별도의 인덱스가 있어서 사용자의 액션에 따라 한 판씩 이동하는 것에 비해 스크롤은 모두 동일하지만 사용자의 액션에 의해 스크롤되는 UI 컴포넌트이다.</p>
+<p>인덱스 기능을 빼면 사실 둘 다 같다. 그럼 동일한 기능이니깐 공통 사용자 액션을 바탕으로 상속해서 요렇게 하면 좋겠다라는 유혹(?)이 시작된다. 여기까지는 사실 괜찮다.</p>
+<p>관여하는 모듈도 많지도 않고 나름 나쁘지 않다. 하지만 이제 요구사항이 늘면서 우린 헬게이트로 빠지게 된다.</p>
+<p>캐로셀의 이동 모양만 변경한 여러 종류의 캐로셀을 만드는 요구사항이 추가되었다.</p>
+<p>Carousel을 상속함으로써 이동 모양에 대한 부분만 overriding 하면, SlideCarousel, PreviewCarousel, CubeCarousel 등 다양한 캐로셀을 손쉽게 만들 수 있었다. 이때는 참 뿌듯했다. 몇 줄 안되는 코드로 다양한 요구사항을 손쉽게 해결했으니 ㅋㅋㅋ</p>
+<p>하지만 문제는 여기서 부터였다. 여러 종류의 캐로셀마다 다양한 요구사항들이 추가되었고 이로 인해 하위에 있는 XXXCarousel이 변경되었고, 이로 인해 오히려 상위의 컴포넌트도 변경을 해야하는 상황이 도래했다.</p>
+<p>코드는 줄었지만. 변경시 마다 상위 모듈이 함께 변경 될 소지가 있었고 각각의 역할은 자율성을 갖지 못하고 영향을 미치게되었다. 가장 미치게 하는 것은 코드는 짧아졌지만 <code>상위 모듈을 다 이해하지 않은 이상</code> 코드의 변경이 어려워졌다.</p>
+<p>이때 했던 실수를 이 책에서는 명확하게 집혀주고 있다.</p>
+<blockquote>
+<p>상속은 구현 상속이 아니라 인터페이스 상속을 위해 사용해야 한다.</p>
+</blockquote>
+<p>이를 구현의 <code>재사용성 관점</code>으로 접근하면 나와 같은 경험을 할 수 있다. 하지만 인터페이스 상속. 즉, 다형성을 이용하기 위한 인터페이스 상속은 좋은 결과를 낳는다. 물론, <code>구현 자체를 공유할 필요가 없는 경우</code>라면 인터페이스만을 사용하는 것이 훨~씬 유연한 구조를 가져갈 수 있다.</p>
+<p>위에서 예시로 든 캐로셀과 스크롤의 경우에는 1차적으로는 사용자 액션 부분을 모듈화 하여 자율성을 부여한 후, 이를 캐로셀이나 스크롤에서 사용하는 사용자 액션을 사용하는 <code>합성</code> 방법이 더 효과적이다.</p>
+<p>다음으로 다양한 종류의 캐로셀의 경우, 캐로셀의 <u>구현체를 공유할 필요가 없다면 인터페이스</u>로 <code>추상화</code> 를 하고 그렇지 않고 <u>구현체를 일부 공유해야한다면</u>  <code>상속</code>을 이용하여 <code>템플릿 메소드 패턴</code>을 고려하는 것도 좋은 방법이다.</p>
+<img src="/blog/2019/07/31/object-book1/templateMethod.jpeg">
+
+
+<h3 id="인터페이스와-상속"><a href="#인터페이스와-상속" class="headerlink" title="인터페이스와 상속"></a>인터페이스와 상속</h3><p>J2EE로 구현된 모듈들을 보면 많은 상속된 객체를 사용하고 있고 사용자에게는 대체로 인터페이스 구현 형태를 제시하고 있다. </p>
+<p>개발을 처음 시작할 때는 인터페이스를 보면서 이런 생각을 했었다.</p>
+<p>아니 그냥 만들면 될 것을 왜? 굳이 인터페이스를 만들어야 하는가? </p>
+<p>사실 Java개발을 할때 가장 불편하고 짜증났던 것 중에 하나가 이런 중복 코드를 매번 재생성해야하는 것이 사실 좀 불합리해 보였다. 하지만 그 대상이 여러 개라면… 즉 다형성이 필요하다면 이야기는 달라진다. 인터페이스 만한게 없다.</p>
+<blockquote>
+<p>난 이런 메시지를 줄테니 잘 모르겠고 넌 이런 형태의 응답을 줘!</p>
+</blockquote>
+<p>인터페이스 빼고는 의존성이 없다. 규칙만 잘 지키면 된다. 하지만. 상속은 어떠한가?</p>
+<p>상속은 사실 <code>굉장한 강결합</code>이다. 부모의 메소드를 알지 못하면 모르고, 부모가 어떻게 동작하는지에 대한 내용을 모르면 자식의 영향도를 파악하기가 어렵다. 한마디로 일차로 <strong>캡슐화 위반</strong>이다. 캡슐화 위반은 사실상 의존성의 증대를 의미한다.</p>
+<p>개인적인 생각으로는 극단적이지만 <code>상속은 필요 없다</code>에 한 표를 주고 싶다. 너무 매정하다 싶으면 이렇게 고치고 싶다.</p>
+<p><code>상속은 최대 한 번이면 족하다.</code> </p>
+<p>상속은 결합도가 높은 패턴이기 때문에 정말 자신이 잘 만들 자신이 있거나 그렇지 않다면 오히려 당신의 퇴근시간을 늦출 수 있는 지름길이 될 수 있다. </p>
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/book/">book</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/inheritance/">inheritance</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/oop/">oop</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2019/08/10/object-book2/" data-tooltip="오브젝트 책에 대한 잡담 - 2" aria-label="PREVIOUS: 오브젝트 책에 대한 잡담 - 2">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2019/06/09/nodejs-memoryleak/" data-tooltip="어서와, Memory Leak은 처음이지?" aria-label="NEXT: 어서와, Memory Leak은 처음이지?">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2019/07/31/object-book1/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2019/07/31/object-book1/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2019/08/10/object-book2/" data-tooltip="오브젝트 책에 대한 잡담 - 2" aria-label="PREVIOUS: 오브젝트 책에 대한 잡담 - 2">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2019/06/09/nodejs-memoryleak/" data-tooltip="어서와, Memory Leak은 처음이지?" aria-label="NEXT: 어서와, Memory Leak은 처음이지?">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2019/07/31/object-book1/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2019/07/31/object-book1/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2019/07/31/object-book1/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2019/07/31/object-book1/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2019/07/31/object-book1/';
+                 
+                    this.page.identifier = '2019/07/31/object-book1/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>

@@ -1,0 +1,818 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        책을 쓰기전에 내가 이미 알았더라면 좋았을 툴 - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"이번으로 2번째 책을 탈고 했다.첫번째 책은 정말로 얼떨결에 썼던 것같다.\n첫번째 책이 ‘와 내가 저자가 되는거야?’ 라는 호기심과 영웅 심리(?)로 했었던 것이라면 이번 건은 진짜 써보고 싶어서 쓴 책이다. 그 만큼 시간도 많이 들어간 것 같고 열정도 많이 쏟았던 것 같다.다만 아쉬움이 있다면. 생활고(?)에 힘들어서 책을 쓰는 기간이 너무 늘어났다는 것이다.원래는 7개월 정도에 마무리 하려고 했지만 질질끌다보니 1년이 훌쩍 지나가 버렸다.아마 처음 계획했던 것을 하려고했으면 아마 지금도 못 끝냈을 지도 모른다.\n책을 쓰는 것은 많이 시간이 들고 집필의 압박감에 꽤나 고단하고 피곤한 작업이다.돈을 벌수 있는 수단도 아니다.\n물론, 초급자 대상의 책을 쭉쭉~ 뽑아내면 금전적으로 이득을 볼 수 있겠지만 나 같이 전문적인 기술 서적으로 돈을 번다는 것은 쉬운 일이 아니다.\n특히나 RxJS와 같이 이해하고 어렵고 특수한 분야의 책으로 돈을 벌기는 더더구나 힘들다.\n\n\n그럼 난 왜 책을 썼는가?그러게 왜 썼을까? ㅋㅋ\n우선 이 책을 쓰게 된 계기는\n첫째. RxJS를 내가 더 잘 알고 싶었다.강의도 마찬가지이지만 누군가에서 설명하고 가르치기 위해서는 많은 것을 확인해보고 검증해야한다. 더불어 내가 이해하지 않은 내용은 전달 자체를 할 수가 없다. 전달한다고 하더라고 듣고 있는 청자가 바로 눈치 챌 것이다. 그런데 글로 남는 책은 더더욱 그렇다. 사실 더욱 더 치밀하고 꼼꼼하게 확인해봐야한다.\n둘째. 아내의 권유로아내의 권유로 책을 쓰기로 마음을 먹었다. 아내 입장에서는 남편이 책을 쓴 저자라는게 꽤나 흐믓한 일인것 같았다. 아내도 책을 쓰는 시간을 도와준다고 확답(?)까지 했으니 나도 거절할 이유가 별로 없었다.\n셋째. 내가 고민한 내용을 책으로 쓰고 싶었다.첫번째 쓴 책은 내가 경험한 것을 주로 썼던 것이라면 이번 책은 경험과 함께 고민이 함께 녹아들어간 책이다. RxJS를 비동기 처리의 한 요소로만 바라보는 분들에게 설명을 해주고 싶었고, 내가 개발하면서 느꼈던 고귀함(?)같은 것을 전달해 주고 싶었다.\n암튼 곧 출판을 곧 앞둔 이 시점에서 가장 마음에 드는 것은 이제 집에가서 책을 써야한다는 강박관념이 없어서 너무 좋다. 행복하다. 오히려 뭘해야하지? 라는 공허함도 든다.\n책 쓰기 전에는 유투브를 보면서도 책을 써야한다는 생각에 앉아서 걱정하며 지냈는데 지금은 집에가면 너무 편하다.\n잠시 이야기를 하다보니 내가 이 글을 쓰게된 이유를 망각했다.\n이 글은 내가 책을 쓰기전에 알았더라면 더 좋았을 툴들을 몇가지 이야기해보고자 한다.\n책을 쓰기전에 내가 이미 알았더라면 좋았을 툴1. Typora글을 쓸 때 주로 마크다운 문서로 작성을 했다. github 나 gitlab에서 MD파일 자체를 바로 불수 있었기에 꽤 편리했다. 하지만, 아쉬웠던 점은 마크다운 문서의 아웃라인이 잘 보이지 않아서 쓴 글을 몇번이고 쳐다보면서 고쳤던 경험이 있다.아마도 typora라는 마크업 편집기를 사전에 썼다면 훨씬 유용했을 것 같다.뿐만아니라 word, pdf와 같은 다양한 포맷으로 문서를 만들수 있어서 작성한 글을 다른 플랫폼으로 이전하기가 너~무 편하다.\n\n\n2. Google Docs이번에 베타리더들 대상으로 실시간 리뷰를 받은 적이 있는데 처음에는 github의 PR로 리뷰를 받다가 결국에는 구글독스를 이용하였다.MS-WORD가 문서 이력을 관리하고 수정 첨부 등이 용이한 반면 온라인 기능을 바로 사용하기는 어렵다. 물론 MSOffice 365를 사용하면 가능하다 하지만, 유료를 굳이 구매할 필요가 있나싶다.\nMSOffice 365같은 기능을 무료로 사용할 수 있는 툴이 있다. 바로 구글 독스이다.구글 독스를 이용하면 실시간 문서의 리뷰가 가능하다. 베타리더의 의견을 받기에는 이것보다 좋은 것은 아직까지 못 본듯하다.\n\n\n3. gitbook초창기에 이것도 한번 써보려고 해봤는데… 포기.\n사실 개인이 책을 쓰는 것이기 때문에 공개를 목적이 아닌 이상 gitbook은 오히려 번거로워서 사용하려다가 말았다. 만약 공개 책을 쓰거나 gitbook 유료 개정이 있다면 gitbook도 나쁘지 않은 선택인 것 같다.지금은 초창기에 썼던 것보다 훨씬 더 괜찮아진 것 같다.\n\n\n4. Jsfiddle, codepenjsfiddle, codepen과 같은 온라인에서 소스 예제를 작성하기 좋은 사이트들이 있다. 처음에 나도 도입하려고 해봤는데 생각만큼 이력관리가 잘 안된다. 그리고 소스 수정하는게 꽤나 번거롭다.\n암튼 이것도… 포기\n\n\n다시 내가 책을 쓴다면…와이프랑 아이에게 프로그래밍 가르치는 책을 한번 써보고 싶다는 생각은 있지만… 생각만 있을뿐 다음에 책을 쓸지는 모르겠다.\n암튼, 만약 내가 다시 책을 쓴다면 아마 다음과 같이 작업을 할 것 같다.\n\n문서\n목차, 초안은 Typora로 로컬에서 마크다운 문서를 작성한다.\n이때 작성된 문서는 GitHub나 gitlab으로 관리한다.\n1차로 작성이 끝난 문서는 word형태로 변경하여 구글 독스에서 작업한다.\n문서 리뷰가 필요하다면 구글 독스의 공유기능을 이용하여 베타리뷰어의 리뷰를 받는다.\n\n\n소스\n온라인 소스 공유공간을 이용하지 않고 로컬에서 자유롭게 수정할수 있도록 작성한다.\nGitHub나 gitlab을 이용하여 소스를 관리하고 PR을 통해 코드 리뷰를 받는다.\n\n\n\n아니면…\n그냥 돈을 주고 gitbook을 써볼 듯 하다. ^^;\n","dateCreated":"2018-07-07T20:37:09+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2018-07-07T20:37:09+09:00","description":"이번으로 2번째 책을 탈고 했다.첫번째 책은 정말로 얼떨결에 썼던 것같다.\n첫번째 책이 ‘와 내가 저자가 되는거야?’ 라는 호기심과 영웅 심리(?)로 했었던 것이라면 이번 건은 진짜 써보고 싶어서 쓴 책이다. 그 만큼 시간도 많이 들어간 것 같고 열정도 많이 쏟았던 것 같다.다만 아쉬움이 있다면. 생활고(?)에 힘들어서 책을 쓰는 기간이 너무 늘어났다는 것이다.원래는 7개월 정도에 마무리 하려고 했지만 질질끌다보니 1년이 훌쩍 지나가 버렸다.아마 처음 계획했던 것을 하려고했으면 아마 지금도 못 끝냈을 지도 모른다.\n책을 쓰는 것은 많이 시간이 들고 집필의 압박감에 꽤나 고단하고 피곤한 작업이다.돈을 벌수 있는 수단도 아니다.\n물론, 초급자 대상의 책을 쭉쭉~ 뽑아내면 금전적으로 이득을 볼 수 있겠지만 나 같이 전문적인 기술 서적으로 돈을 번다는 것은 쉬운 일이 아니다.\n특히나 RxJS와 같이 이해하고 어렵고 특수한 분야의 책으로 돈을 벌기는 더더구나 힘들다.","headline":"책을 쓰기전에 내가 이미 알았더라면 좋았을 툴","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/","keywords":"book, tools"}</script>
+    <meta name="description" content="이번으로 2번째 책을 탈고 했다.첫번째 책은 정말로 얼떨결에 썼던 것같다. 첫번째 책이 ‘와 내가 저자가 되는거야?’ 라는 호기심과 영웅 심리(?)로 했었던 것이라면 이번 건은 진짜 써보고 싶어서 쓴 책이다. 그 만큼 시간도 많이 들어간 것 같고 열정도 많이 쏟았던 것 같다.다만 아쉬움이 있다면. 생활고(?)에 힘들어서 책을 쓰는 기간이 너무 늘어났다는 것">
+<meta name="keywords" content="book,tools">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="책을 쓰기전에 내가 이미 알았더라면 좋았을 툴">
+<meta property="og:url" content="http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="이번으로 2번째 책을 탈고 했다.첫번째 책은 정말로 얼떨결에 썼던 것같다. 첫번째 책이 ‘와 내가 저자가 되는거야?’ 라는 호기심과 영웅 심리(?)로 했었던 것이라면 이번 건은 진짜 써보고 싶어서 쓴 책이다. 그 만큼 시간도 많이 들어간 것 같고 열정도 많이 쏟았던 것 같다.다만 아쉬움이 있다면. 생활고(?)에 힘들어서 책을 쓰는 기간이 너무 늘어났다는 것">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/typora.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/google-docs.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/gitbook.jpeg">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/codepen.png">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="책을 쓰기전에 내가 이미 알았더라면 좋았을 툴">
+<meta name="twitter:description" content="이번으로 2번째 책을 탈고 했다.첫번째 책은 정말로 얼떨결에 썼던 것같다. 첫번째 책이 ‘와 내가 저자가 되는거야?’ 라는 호기심과 영웅 심리(?)로 했었던 것이라면 이번 건은 진짜 써보고 싶어서 쓴 책이다. 그 만큼 시간도 많이 들어간 것 같고 열정도 많이 쏟았던 것 같다.다만 아쉬움이 있다면. 생활고(?)에 힘들어서 책을 쓰는 기간이 너무 늘어났다는 것">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/typora.png">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            책을 쓰기전에 내가 이미 알았더라면 좋았을 툴
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-07-07T20:37:09+09:00">
+	
+		    Jul 07, 2018
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Life/">Life</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <h2 id="이번으로-2번째-책을-탈고-했다"><a href="#이번으로-2번째-책을-탈고-했다" class="headerlink" title="이번으로 2번째 책을 탈고 했다."></a>이번으로 2번째 책을 탈고 했다.</h2><p><a href="http://book.naver.com/bookdb/book_detail.nhn?bid=7434247" rel="external nofollow noopener noreferrer" target="_blank">첫번째 책</a>은 정말로 얼떨결에 썼던 것같다.</p>
+<p>첫번째 책이 <strong>‘와 내가 저자가 되는거야?’</strong> 라는 호기심과 영웅 심리(?)로 했었던 것이라면 이번 건은 진짜 써보고 싶어서 쓴 책이다. 그 만큼 시간도 많이 들어간 것 같고 열정도 많이 쏟았던 것 같다.<br>다만 아쉬움이 있다면. 생활고(?)에 힘들어서 책을 쓰는 기간이 너무 늘어났다는 것이다.<br>원래는 7개월 정도에 마무리 하려고 했지만 질질끌다보니 1년이 훌쩍 지나가 버렸다.<br>아마 처음 계획했던 것을 하려고했으면 아마 지금도 못 끝냈을 지도 모른다.</p>
+<p>책을 쓰는 것은 많이 시간이 들고 집필의 압박감에 꽤나 고단하고 피곤한 작업이다.<br>돈을 벌수 있는 수단도 아니다.</p>
+<p>물론, 초급자 대상의 책을 쭉쭉~ 뽑아내면 금전적으로 이득을 볼 수 있겠지만 나 같이 전문적인 기술 서적으로 돈을 번다는 것은 쉬운 일이 아니다.</p>
+<p>특히나 RxJS와 같이 이해하고 어렵고 특수한 분야의 책으로 돈을 벌기는 더더구나 힘들다.</p>
+<a id="more"></a>
+
+<h2 id="그럼-난-왜-책을-썼는가"><a href="#그럼-난-왜-책을-썼는가" class="headerlink" title="그럼 난 왜 책을 썼는가?"></a>그럼 난 왜 책을 썼는가?</h2><p>그러게 왜 썼을까? ㅋㅋ</p>
+<p>우선 이 책을 쓰게 된 계기는</p>
+<h3 id="첫째-RxJS를-내가-더-잘-알고-싶었다"><a href="#첫째-RxJS를-내가-더-잘-알고-싶었다" class="headerlink" title="첫째. RxJS를 내가 더 잘 알고 싶었다."></a>첫째. RxJS를 내가 더 잘 알고 싶었다.</h3><p>강의도 마찬가지이지만 누군가에서 설명하고 가르치기 위해서는 많은 것을 확인해보고 검증해야한다. 더불어 내가 이해하지 않은 내용은 전달 자체를 할 수가 없다. 전달한다고 하더라고 듣고 있는 청자가 바로 눈치 챌 것이다. 그런데 글로 남는 책은 더더욱 그렇다. 사실 더욱 더 치밀하고 꼼꼼하게 확인해봐야한다.</p>
+<h3 id="둘째-아내의-권유로"><a href="#둘째-아내의-권유로" class="headerlink" title="둘째. 아내의 권유로"></a>둘째. 아내의 권유로</h3><p>아내의 권유로 책을 쓰기로 마음을 먹었다. 아내 입장에서는 남편이 책을 쓴 저자라는게 꽤나 흐믓한 일인것 같았다. 아내도 책을 쓰는 시간을 도와준다고 확답(?)까지 했으니 나도 거절할 이유가 별로 없었다.</p>
+<h3 id="셋째-내가-고민한-내용을-책으로-쓰고-싶었다"><a href="#셋째-내가-고민한-내용을-책으로-쓰고-싶었다" class="headerlink" title="셋째. 내가 고민한 내용을 책으로 쓰고 싶었다."></a>셋째. 내가 고민한 내용을 책으로 쓰고 싶었다.</h3><p>첫번째 쓴 책은 내가 <strong>경험한 것</strong>을 주로 썼던 것이라면 이번 책은 <strong>경험과 함께 고민이 함께 녹아들어간 책</strong>이다. RxJS를 비동기 처리의 한 요소로만 바라보는 분들에게 설명을 해주고 싶었고, 내가 개발하면서 느꼈던 고귀함(?)같은 것을 전달해 주고 싶었다.</p>
+<p>암튼 곧 출판을 곧 앞둔 이 시점에서 가장 마음에 드는 것은 이제 집에가서 책을 써야한다는 강박관념이 없어서 너무 좋다. 행복하다. 오히려 뭘해야하지? 라는 공허함도 든다.</p>
+<p>책 쓰기 전에는 유투브를 보면서도 책을 써야한다는 생각에 앉아서 걱정하며 지냈는데 지금은 집에가면 너무 편하다.</p>
+<p>잠시 이야기를 하다보니 내가 이 글을 쓰게된 이유를 망각했다.</p>
+<p>이 글은 내가 책을 쓰기전에 알았더라면 더 좋았을 툴들을 몇가지 이야기해보고자 한다.</p>
+<h2 id="책을-쓰기전에-내가-이미-알았더라면-좋았을-툴"><a href="#책을-쓰기전에-내가-이미-알았더라면-좋았을-툴" class="headerlink" title="책을 쓰기전에 내가 이미 알았더라면 좋았을 툴"></a>책을 쓰기전에 내가 이미 알았더라면 좋았을 툴</h2><h3 id="1-Typora"><a href="#1-Typora" class="headerlink" title="1. Typora"></a>1. Typora</h3><p>글을 쓸 때 주로 마크다운 문서로 작성을 했다. github 나 gitlab에서 MD파일 자체를 바로 불수 있었기에 꽤 편리했다. 하지만, 아쉬웠던 점은 마크다운 문서의 아웃라인이 잘 보이지 않아서 쓴 글을 몇번이고 쳐다보면서 고쳤던 경험이 있다.<br>아마도 <a href="https://typora.io/" rel="external nofollow noopener noreferrer" target="_blank">typora</a>라는 마크업 편집기를 사전에 썼다면 훨씬 유용했을 것 같다.<br>뿐만아니라 word, pdf와 같은 다양한 포맷으로 문서를 만들수 있어서 작성한 글을 다른 플랫폼으로 이전하기가 너~무 편하다.</p>
+<img src="/blog/2018/07/07/know-before-you-write-book/typora.png">
+
+<h3 id="2-Google-Docs"><a href="#2-Google-Docs" class="headerlink" title="2. Google Docs"></a>2. Google Docs</h3><p>이번에 베타리더들 대상으로 실시간 리뷰를 받은 적이 있는데 처음에는 github의 PR로 리뷰를 받다가 결국에는 <a href="https://docs.google.com/" rel="external nofollow noopener noreferrer" target="_blank">구글독스</a>를 이용하였다.<br>MS-WORD가 문서 이력을 관리하고 수정 첨부 등이 용이한 반면 온라인 기능을 바로 사용하기는 어렵다. 물론 MSOffice 365를 사용하면 가능하다 하지만, 유료를 굳이 구매할 필요가 있나싶다.</p>
+<p>MSOffice 365같은 기능을 무료로 사용할 수 있는 툴이 있다. 바로 구글 독스이다.<br>구글 독스를 이용하면 실시간 문서의 리뷰가 가능하다. 베타리더의 의견을 받기에는 이것보다 좋은 것은 아직까지 못 본듯하다.</p>
+<img src="/blog/2018/07/07/know-before-you-write-book/google-docs.png">
+
+<h3 id="3-gitbook"><a href="#3-gitbook" class="headerlink" title="3. gitbook"></a>3. gitbook</h3><p>초창기에 이것도 한번 써보려고 해봤는데… 포기.</p>
+<p>사실 개인이 책을 쓰는 것이기 때문에 공개를 목적이 아닌 이상 gitbook은 오히려 번거로워서 사용하려다가 말았다. 만약 공개 책을 쓰거나 gitbook 유료 개정이 있다면 gitbook도 나쁘지 않은 선택인 것 같다.<br>지금은 초창기에 썼던 것보다 훨씬 더 괜찮아진 것 같다.</p>
+<img src="/blog/2018/07/07/know-before-you-write-book/gitbook.jpeg">
+
+<h3 id="4-Jsfiddle-codepen"><a href="#4-Jsfiddle-codepen" class="headerlink" title="4. Jsfiddle, codepen"></a>4. Jsfiddle, codepen</h3><p>jsfiddle, codepen과 같은 온라인에서 소스 예제를 작성하기 좋은 사이트들이 있다. 처음에 나도 도입하려고 해봤는데 생각만큼 이력관리가 잘 안된다. 그리고 소스 수정하는게 꽤나 번거롭다.</p>
+<p>암튼 이것도… 포기</p>
+<img src="/blog/2018/07/07/know-before-you-write-book/codepen.png">
+
+<h2 id="다시-내가-책을-쓴다면…"><a href="#다시-내가-책을-쓴다면…" class="headerlink" title="다시 내가 책을 쓴다면…"></a>다시 내가 책을 쓴다면…</h2><p>와이프랑 아이에게 프로그래밍 가르치는 책을 한번 써보고 싶다는 생각은 있지만… 생각만 있을뿐 다음에 책을 쓸지는 모르겠다.</p>
+<p>암튼, 만약 내가 다시 책을 쓴다면 아마 다음과 같이 작업을 할 것 같다.</p>
+<ol>
+<li>문서<ul>
+<li>목차, 초안은 <strong><u>Typora</u></strong>로 로컬에서 마크다운 문서를 작성한다.</li>
+<li>이때 작성된 문서는 <strong><u>GitHub나 gitlab</u></strong>으로 관리한다.</li>
+<li>1차로 작성이 끝난 문서는 word형태로 변경하여 <strong><u>구글 독스</u></strong>에서 작업한다.</li>
+<li>문서 리뷰가 필요하다면 구글 독스의 공유기능을 이용하여 베타리뷰어의 리뷰를 받는다.</li>
+</ul>
+</li>
+<li>소스<ul>
+<li>온라인 소스 공유공간을 이용하지 않고 로컬에서 자유롭게 수정할수 있도록 작성한다.</li>
+<li><strong><u>GitHub나 gitlab</u></strong>을 이용하여 소스를 관리하고 PR을 통해 코드 리뷰를 받는다.</li>
+</ul>
+</li>
+</ol>
+<p>아니면…</p>
+<p>그냥 돈을 주고 <strong><u>gitbook</u></strong>을 써볼 듯 하다. ^^;</p>
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/book/">book</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/tools/">tools</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/11/28/to-vscode-in-2019/" data-tooltip="2019년 자바스크립트 개발은 VSCODE로" aria-label="PREVIOUS: 2019년 자바스크립트 개발은 VSCODE로">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/04/11/complete-book/" data-tooltip="아~ 드디어 탈고!" aria-label="NEXT: 아~ 드디어 탈고!">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/11/28/to-vscode-in-2019/" data-tooltip="2019년 자바스크립트 개발은 VSCODE로" aria-label="PREVIOUS: 2019년 자바스크립트 개발은 VSCODE로">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/04/11/complete-book/" data-tooltip="아~ 드디어 탈고!" aria-label="NEXT: 아~ 드디어 탈고!">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2018/07/07/know-before-you-write-book/';
+                 
+                    this.page.identifier = '2018/07/07/know-before-you-write-book/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>

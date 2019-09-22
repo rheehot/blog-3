@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        RxJS가 해결하려고했던 문제3 - 로직 처리의 오류 - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2017/07/26/rxjsbook3/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"오늘 소개할 부분은웹어플리케이션 개발시 발생할 수 있는 로직 오류에 대한 문제를 RxJS는 어떻게 접근했는지에 대한 이야기이다.\n\n웹어플리케이션의 로직웹어플리케이션은 로직에 근거하여 전달받은 입력값을 이용하여 새로운 결과를 반환하거나 표현한다.여기서 로직은 산술적인 로직이 될 수 있고 비즈니스적인 로직이 될수 있다. 또는 if문과 같이 간단한 프로그램의 흐름을 담당하는 부분일 수도 있다.\n화면에 사용자 정보를 표현하는 UI 작성하는 예를 생각해보자. (예제에서 사용하는 API는 스타워즈 등장인물을 조회한다)DB로부터 조회한 사용자 목록 데이터가 입력값이라면 이 값을 바탕으로 우리는 다양한 처리를 한다.\n\n성별이 “남”과 “여”인 사용자만 추출한다 (스타워즈 등장인물은 로봇과 같이 성별이 없는 사용자도 있다)\n사용자의 이름, 키, 몸무게를 표시한다.\n사용자의 성별에 맞게 아이콘을 화면에 표시한다.\n사용자의 표준 체중을 계산하여 표시한다.\nBROCA 방식\n\n남자 표준체중 = (키 - 100) × 0.9\n여자 표준체중 = (키 - 105) × 0.9\n\nBMI 방식\n\n남자 표준체중 = 키/100 _ 키/100 _ 22\n여자 표준체중 = 키/100 _ 키/100 _ 21\n\n\n\n\n1234567891011121314151617181920212223242526272829303132333435363738394041424344const xhr = new XMLHttpRequest();xhr.onreadystatechange = function() &#123;  if (xhr.readyState == 4 &amp;&amp; xhr.status == 200) &#123;    const jsonData = JSON.parse(xhr.responseText);    document.getElementById(\"users\").innerHTML = process(jsonData);  &#125;&#125;;xhr.open(\"GET\", \"http://swapi.co/api/people/\");xhr.send();// 데이터를 처리하는 함수function process(people) &#123;  const html = [];  for (const user of people.results) &#123;    if (/male|female/.test(user.gender)) &#123;      let broca;      let bmi;      if (user.gender == \"male\") &#123;        broca = (user.height - 100 * 0.9).toFixed(2);        bmi = ((((user.height / 100) * user.height) / 100) * 22).toFixed(2);      &#125; else &#123;        broca = (user.height - 100 * 0.9).toFixed(2);        bmi = ((((user.height / 100) * user.height) / 100) * 21).toFixed(2);      &#125;      const obesityUsingBroca = (((user.mass - broca) / broca) * 100).toFixed(        2      );      const obesityUsingBmi = (((user.mass - bmi) / bmi) * 100).toFixed(2);      html.push(`&lt;li class='card'&gt;\t\t\t  &lt;dl&gt;\t\t\t      &lt;dt&gt;$&#123;user.name&#125; &lt;i class=\"fa fa-$&#123;user.gender&#125;\"&gt;&lt;/i&gt;&lt;/dt&gt;\t\t\t      &lt;dd&gt;&lt;span&gt;키 : &lt;/span&gt;&lt;span&gt;$&#123;user.height&#125; cm&lt;/span&gt;&lt;/dd&gt;\t\t\t      &lt;dd&gt;&lt;span&gt;몸무게: &lt;/span&gt;&lt;span&gt;$&#123;user.mass&#125; kg&lt;/span&gt;&lt;/dd&gt;\t\t\t      &lt;dd&gt;&lt;span&gt;BROCA 표준체중 : &lt;/span&gt;&lt;span&gt;$&#123;broca&#125; kg&lt;/span&gt;&lt;/dd&gt;\t\t\t      &lt;dd&gt;&lt;span&gt;BROCA 비만도 : $&#123;obesityUsingBroca&#125;&lt;/span&gt;&lt;/dd&gt;\t\t\t      &lt;dd&gt;&lt;span&gt;BMI 표준체중 : &lt;/span&gt;&lt;span&gt;$&#123;bmi&#125; kg&lt;/span&gt;&lt;/dd&gt;\t\t\t      &lt;dd&gt;&lt;span&gt;BMI 비만도 : $&#123;obesityUsingBmi&#125;&lt;/span&gt;&lt;/dd&gt;\t\t\t  &lt;/dl&gt;\t\t      &lt;/li&gt;`);    &#125;  &#125;  return html.join(\"\");&#125;\n\n\n\n원래 조회했던 데이터는 온데 간데 없고 그 데이터로부터 생산된 새로운 정보들을 사용하고 있다.위 예제는 사용자 체중과 키를 이용하여 성별에 따라 비만도 값을 계산하고 성별 아이콘을 화면에 표시한다.\n우리는 알게 모르게 데이터를 추출하고 변환하는 작업을 빈번하게 하고 있다.복수 데이터를 처리하기 위해서는 반복문을 사용하고, 상황에 따라 데이터를 추출하거나 접근하기 위해서 분기문을 사용한다.또한, 상황을 기억하거나 추출된 정보를 임시로 기억하기 위해서 변수를 사용한다.\n로직의 복잡성 그리고 오류반복문과 분기문 그리고 변수는 우리 코드를 복잡하게 만든다. 반복문은 우리 코드의 가독성을 떨어뜨리고 분기문은 우리가 확인해야할 프로그램의 흐름을 여러 개로 만든다. 더군다나 우리가 기억해 놓은 변수의 값은 누군가에 의해 변경될 수 있다. 변수의 값이 변하면 우리가 의도했던대로 흐름으로 프로그램이 동작하지 않을 수 있다.이렇게 반복문과 분기문 그리고 변수는 우리 코드의 복잡도를 높이고 가독성을 떨어뜨리고, 결국에는 오류의 발생 빈도를 높인다.\n반복문과 분기문로직의 복잡성을 줄이는 가장 간단한 방법으로는 기능을 쪼개는 것이다. 기능별로 쪼갠다는게 단순히 구역별로 쪼개게 되면 기능의 의미를 명확하게 드러내지 못한다. 더불어 이런 코드는 재사용성을 떨어뜨린다.\n이렇게 기능을 쪼개는 일이 쉬운 일이 아닌 이유는 코드의 대다수는 다음과 같이 로직과 반복문, 분기문의 결합으로 구성되어 있기 때문이다.\n\n\n코드에서 반복문과 분기문을 모두 제거한다는 것은 사실상 불가능하다. 하지만 기능 단위로 분리 할 수 있다면 기능을 추상화 할 수 있고, 이로 인해 로직의 복잡성을 줄일 수 있다.\n변수는 오류의 시작변수를 사용한다는 의미는 오류를 발생시킬 수 있는 확률을 높일 수 있다. 변수는 변경될 수 있는 값이기 때문에 유용하다. 반면, 의도치 않게 이 값이 바뀔 경우에 우리는 오류에 직면하게 된다.브라우저 환경의 자바스크립트에서는 싱글 쓰레드 구조이기 때문에 Mutil Thread의 사용으로 인한 동시성 문제는 자주 발생하지 않는다. 하지만 DOM에 등록된 이벤트 핸들러로 인해 변수의 값이 변경되거나 비동기 행위로 인해 외부로 노출된 변수의 값들이 변경 될 수 있다.\n\nWebWorker와 같은 기술 스펙을 사용하면 Mutil Thread 기술을 사용할 수 있지만 브라우저는 기본적으로 하나의 메인 스레드에서 모든 작업이 이루어 진다.\n\n따라서, 우리는 변수의 노출 범위를 제한하거나 제거함으로써 변수의 값이 외부에 의해 변경되지 않고 개발자의 의도에 따라 정확하게 변경될 수 있도록 보장하여만 한다.\n자바스크립트의 솔루션다행히도 자바스크립트는 이런 면에서는 꽤나 훌륭한 솔루션을 제공하고 있다.함수형 프로그래밍의 특성을 가진 자바스크립트 함수를 이용하면 실제 로직과 상관이 없는 반복문, 분기문을 분리할 수 있다. 더불어 변수 또한 제거해 나갈 수 있다.이렇게 함으로써 로직의 의미를 더욱 명확히 할 수 있으며 재사용성을 더욱 높일 수 있다.\n\n자바스크립트 함수는 일급객체이다.일급 객체(First-class object)는 다음과 같은 특성을 가지고 있다.\n\n변수 혹은 데이터 구조에 저장할 수 있다1var savedFunction = function() &#123;&#125;;\n\n\n\n\n\n파라미터로 전달할 수 있다.1234function foo(f, value) &#123;&#125;; foo(function() &#123;     console.log(\"함수를 파라미터로 전달 할 수 있다\"); &#125;, \"값\");\n\n\n\n\n\n반환값으로 사용할 수 있다.12345function foo() &#123;    return function() &#123;       console.log(\"함수를 반환할 수 있다\");    &#125;;&#125;\n\n\n\n로직의 분리앞의 process 함수를 기능 단위의 로직과 반복문, 분기문으로 분리해보자.process 함수는 다음과 같은 구조로 되어 있다.\n\n\n여기에서 우리의 주요 관심사는 성별에 따라 비만도를 구하는 로직과 사용자별 HTML을 만드는 로직이다.이 부분을 별도의 함수로 만들어보자.\n표준 체중과 비만도를 계산하는 함수는 height, mass, gender을 입력값으로 받아서 BROCA와 BMI 방식의 비만도와 표준 체중을 반환한다.\n1234567891011121314151617181920// 표준 체중과 비만도를 계산하는 함수function logic(height, mass, gender) &#123;\tlet broca = (height - (gender === \"male\" ? 100 : 105)) * 0.9;\tlet bmi = height / 100 * height / 100 * (gender === \"male\" ? 22 : 21);\tif (gender == \"male\") &#123;\t\tbroca = (height - 100 * 0.9).toFixed(2);\t\tbmi = (height / 100 * height / 100 * 22).toFixed(2);\t&#125; else &#123;\t\tbroca = (height - 100 * 0.9).toFixed(2);\t\tbmi = (height / 100 * height / 100 * 21).toFixed(2);\t&#125;\tconst obesityUsingBroca = ((mass - broca) / broca * 100).toFixed(2);\tconst obesityUsingBmi = ((mass - bmi) / bmi * 100).toFixed(2);\treturn &#123;\t\tbroca,\t\tbmi,\t\tobesityUsingBroca,\t\tobesityUsingBmi\t&#125;;&#125;\n\n사용자 정보별 HTML을 만드는 함수는 user 정보를 받아서 string 형태의 html을 반환한다.\n1234567891011121314// 사용자 정보를 표현하기 위해 HTML을 만드는 함수function makeHtml(user) &#123;  return `&lt;li class='card'&gt;\t\t&lt;dl&gt;\t\t\t&lt;dt&gt;$&#123;user.name&#125; &lt;i class=\"fa fa-$&#123;user.gender&#125;\"&gt;&lt;/i&gt;&lt;/dt&gt;\t\t\t&lt;dd&gt;&lt;span&gt;키 : &lt;/span&gt;&lt;span&gt;$&#123;user.height&#125; cm&lt;/span&gt;&lt;/dd&gt;\t\t\t&lt;dd&gt;&lt;span&gt;몸무게: &lt;/span&gt;&lt;span&gt;$&#123;user.mass&#125; kg&lt;/span&gt;&lt;/dd&gt;\t\t\t&lt;dd&gt;&lt;span&gt;BROCA 표준체중 : &lt;/span&gt;&lt;span&gt;$&#123;user.broca&#125; kg&lt;/span&gt;&lt;/dd&gt;\t\t\t&lt;dd&gt;&lt;span&gt;BROCA 비만도 : $&#123;user.obesityUsingBroca&#125;&lt;/span&gt;&lt;/dd&gt;\t\t\t&lt;dd&gt;&lt;span&gt;BMI 표준체중 : &lt;/span&gt;&lt;span&gt;$&#123;user.bmi&#125; kg&lt;/span&gt;&lt;/dd&gt;\t\t\t&lt;dd&gt;&lt;span&gt;BMI 비만도 : $&#123;user.obesityUsingBmi&#125;&lt;/span&gt;&lt;/dd&gt;\t\t&lt;/dl&gt;\t&lt;/li&gt;`;&#125;\n\nlogic, makeHtml함수를 이용하면 다음과 같이 process 함수를 작성할 수 있다.\n1234567891011function process(people) &#123;  const html = [];  for (const user of people.results) &#123;    if (/male|female/.test(user.gender)) &#123;      const result = logic(user.height, user.mass, user.gender);      Object.assign(user, result);      html.push(makeHtml(user));    &#125;  &#125;  return html.join(\"\");&#125;\n\nlogic, makeHtml 함수를 만듦으로서 우리는 핵심 로직을 작성는데 집중할 수 있게 되었다.더불어 logic, makeHtml 함수도 재사용 할 수 있는 단위 함수가 되었다.\n반복문, 분기문, 그리고 변수와의 이별위에 개선한 process도 좋은 코드이다. 우리는 구현 로직에 더 집중할 수 있게 되었다.하지만, 흐름을 제어하는 반복문과 분기문은 여전히 process에 존재한다.코드가 크면 클수록 process에 존재하는 반복문과 조건문은 우리 코드의 가독성을 떨어뜨릴 것이다. 더불어 html, result 같은 변수가 여전히 존재하기 때문에 우리는 항상 오류에 노출될 것이다.\n이번에는 ES5에서 제공하는 Array의 filter, map, reduce와 같은 고차함수(High-order function)를 이용하여 process를 개선해 보자.\n\n고차함수 (Higher-order function)\n다른 함수를 인자로 받거나 그 결과로 함수를 반환하는 함수.출처: wikipedia https://en.wikipedia.org/wiki/Higher-order_function\n고차 함수는 변경되는 주요 부분을 함수로 제공함으로서 동일한 패턴 내에 존재하는 문제를 손쉽게 해결할 수 있는 고급 프로그래밍 기법이다.\n고차 함수를 이용하면 함수의 합성, 변형과 같은 작업을 손쉽게 할수 있다. 더불어 Currying, Memoization과 같은 기법도 사용할 수 있다.123const twice = (f, v) =&gt; f(f(v));const fn = v =&gt; v + 3;console.log(twice(fn, 7)); // 13\n\n\n\n12345678910111213function process(people) &#123;  return people.results\t  .filter(user =&gt; /male|female/.test(user.gender))\t\t.map(user =&gt; Object.assign(      user,      logic(user.height, user.mass, user.gender)\t\t))\t\t.reduce((acc, user) =&gt; &#123;\t\t\tacc.push(makeHtml(user));\t\t\treturn acc;\t\t&#125;, [])\t\t.join(\"\");&#125;\n\nif문은 filter로 변환하고, 값을 변환해야하는 경우에는 map을 이용하고, 축적된 데이터를 반환해야하는 경우에는 reduce를 이용하였다.각각의 고차함수에 전달되는 함수는 외부의 변수에 영향을 미치지도 않고, 영향을 받지도 않는 함수이다.전달된 함수는 항상 같은 입력이 주어지면, 항상 같은 출력을 반환한다.이런 함수를 함수형 프로그래밍에서는 순수함수라고 한다.\n\n순수함수와 함수형 프로그래밍에 대한 내용은 부록. 함수형 프로그래밍 (Functional Programming)을 참조하기 바란다.\n\n개선된 process에서는 반복문, 분기문, 변수가 존재하지 않는다.핵심 로직은 분리되었고 코드의 흐름은 단일화되었다. 더불어 변수를 사용하지 않음으로서 오류의 발생 빈도도 크게 줄었다.\nRxJS는 어떻게 개선하였나?RxJS 또한 ES5 Array의 고차 함수와 같은 operator를 제공함으로써 로직에 존재하는 분기문과 반복문, 그리고 변수를 제거하려고 하였다.\nImmutable 객체 ObservableES5 Array의 고차함수들이 반환값으로 새로운 Array 객체를 반환하여 각각에 영향을 미치지 않도록 하는 것과 같이 RxJS의 operator는 항상 새로운 Observable을 반환함으로써 Array의 고차함수와 같이 불변 객체 (Immutable Object)를 반환한다.불변 객체는 생성 후 그 상태를 바꿀 수 없는 객체이다. 불변 객체는 외부에서 값을 변경할 수 없기 때문에 불변 객체를 사용하는 것만으로도 프로그램의 복잡도가 줄어든다.\n1234var arr = [1, 2, 3];var mappedArr = arr.map(v =&gt; v);console.log(arr === mappedArr); // false\n\nArray와 다른점이 있다면 Array의 경우는 새로운 Array 객체 생성 작업만 하지만 Observable은 새로운 Observable를 만들고, 그 Observable이 operator를 호출한 Observable을 내부적으로 subscribe 하는 형태를 유지한다. 즉, Linked list 형태로 기존 Observable 객체와 새롭게 만든 Observable 객체를 operator로 연결하고 있다.\n\n\n한 예로 Observable.map은 다음과 같이 구현되어 있다.\n12345678910111213141516171819Observable.prototype.map = function(transformationFn) &#123;  const source = this;  const result = new Rx.Observable(observer =&gt; &#123;    // 새로운 Observable은 현재의 Observable을 subscribe 한다.    source.subscribe(      // 현재의 Observable에서 전달된 데이터를 변경하여 전달한다.      function(x) &#123;        observer.next(transformationFn(x));      &#125;,      function(err) &#123;        observer.error(err);      &#125;,      function() &#123;        observer.complete();      &#125;    );  &#125;);  return result;&#125;;\n\n이런 구조를 취함으로서 source부터 전달된 데이터, 에러, 종료여부가 Observable의 operator들을 통해 전달되거나 변경되어 구독한 Observer에게 전달할 수 있게 된다.\n앞에서 설명한 표준체중과 비만도 조회 예를 Observable로 변경해보자.\n123456789101112131415161718192021222324const ajax$ = new Rx.Observable(observer =&gt; &#123;  const xhr = new XMLHttpRequest();  xhr.onreadystatechange = function() &#123;    if (xhr.readyState == 4 &amp;&amp; xhr.status == 200) &#123;      const jsonData = JSON.parse(xhr.responseText);      // user 데이터를 user 단위로 변환하여 전달      jsonData.results.forEach(v =&gt; observer.next(v));      observer.complete();    &#125;  &#125;;  xhr.open(\"GET\", \"http://swapi.co/api/people/\");  xhr.send();&#125;);ajax$  .filter(user =&gt; /male|female/.test(user.gender))  .map(user =&gt; Object.assign(user, logic(user.height, user.mass, user.gender)))  .reduce((acc, user) =&gt; &#123;    acc.push(makeHtml(user));    return acc;  &#125;, [])  .subscribe(v =&gt; &#123;    document.getElementById(\"users\").innerHTML = v;  &#125;);\n\n이전 우리가 개선한 process 소스와 큰 차이가 없다.\n\n원리 설명을 위해 부득이하게 사용자 리스트를 사용자로 바꿔 전달하였다.일반적으로는 Ajax를 통해 전달 받은 정보를 바탕으로 operator를 적용한다.\n\n차이라면 다음과 같이 ajax$ Observable를 통해 전달 받은 데이터가 filter, map, reduce를 거쳐 observer에게 전달되는 구조로 되어있다는 것이다.\n\n\nRxJS가 제공하는 Operator다음은 공식 홈페이지에서 제공하는 operator 목록이다.http://reactivex.io/rxjs/manual/overview.html#categories-of-operators\n\n\n\n카테고리\noperator\n\n\n\n생성 operator\najax, bindCallback, bindNodeCallback, create, defer, empty, from, fromEvent, fromEventPattern, fromPromise, generate, interval, never, of,repeat ,repeatWhen, range ,throw ,timer\n\n\n변환 operator\nbuffer, bufferCount, bufferTime, bufferToggle, bufferWhen, concatMap, concatMapTo, exhaustMap, expand, groupBy, map, mapTo, mergeMap, mergeMapTo, mergeScan, pairwise, partition, pluck, scan, switchMap, switchMapTo, window, windowCount, windowTime, windowToggle, windowWhen\n\n\n추출 operator\ndebounce, debounceTime, distinct, distinctKey, distinctUntilChanged, distinctUntilKeyChanged, elementAt, filter, first, ignoreElements, audit, auditTime, last, sample, sampleTime, single, skip, skipUntil, skipWhile, take, takeLast, takeUntil, takeWhile, throttle, throttleTime\n\n\n결합 operator\ncombineAll, combineLatest, concat, concatAll, exhaust, forkJoin, merge, mergeAll, race, startWith, switch, withLatestFrom, zip, zipAll\n\n\n멀티캐스팅 operator\ncache, multicast, publish, publishBehavior, publishLast, publishReplay, share\n\n\n에러 처리 operator\ncatch, retry, retryWhen\n\n\n유틸리티 operator\ndo, delay, delayWhen, dematerialize, finally, let, materialize, observeOn, subscribeOn, timeInterval, timestamp, timeout, timeoutWith, toArray, toPromise\n\n\n조건.참거짓 operator\ndefaultIfEmpty, every, find, findIndex, isEmpty\n\n\n수학,누적 operator\ncount, max, min, reduce\n\n\nRxJS에서 제공하는 operator를 이용하면 Observable을 생성 할 수도 있고 전달된 데이터를 변환하거나 필요한 데이터만을 추출할 수 도 있다.더불어 여러 개의 Observable을 합성하기도 하고, 하나의 Observable을 다른 여러개의 Observable로 나눌 수도 있다.\nRxJS는 정말 많은 operator를 제공한다. operator의 의미에 대해 잘 아는 사람에게는 굉장히 편리하다. 반면 그 의미를 잘 알지 못하는 사람에게는 오히려 진입 장벽이 되기도 한다.이 operator의 기본적인 철학은 함수형 프로그래밍에 그 근간을 두고 있다.아마도 함수형 프로그래밍 언어를 배운 독자라면 꽤 익숙한 이름의 operator들이 있는 것 을 알 수 있다.\nRxJS의 operator는 어휘와 같다.내가 많은 단어와 문장을 알아서 사용하게 되면 나의 편의성이 증가하고 더불어 나의 품격도 높아질수 있다. 하지만, 다른 한편으로는 다른 사람이 내 말을 이해하기 어려워 할 수도 있다.반면 내가 알고 있는 단어와 문장이 적다고 하더라도 의사소통이 될 정도의 단어와 문장을 사용한다면 생활하는데 부족함이 없다. 마찬가지로 RxJS의 모든 operator를 다 알 필요는 없다.카테고리별로 자주쓰는 operator 몇 개를 잘 알고 적용할 수 있다면 충분히 RxJS의 장점을 극대화 할수 있다.따라서, 이 책에서도 RxJS의 모든 Operator를 다루지는 않는다. 주요 카테고리별로 꼭! 알아야하는 RxJS의 Operator를 몇 개를 기준으로 설명을 할 예정이다.자세한 내용은 다음 2부에서 진행하는 실제 프로젝트를 통해 조금씩 익혀나가 보자.\n정리웹어플리케이션의 로직은 반복문, 분기문, 변수에 의해 복잡도가 증가한다. 복잡도가 증가하게되면 이로 인해 코드의 가독성이 떨어지고 결국에는 오류에 직면하게 된다.ES5 Array의 고차함수를 이용하면 반복문, 분기문, 변수를 로직으로부터 분리하고 제거할수 있다. 마찬가지로 RxJS는 ES5 Array의 고차함수와 같은 operator를 제공한다.operator는 Immutable한 Observable를 항상 생성함으로써 외부나 내부에 영향을 미치지 않는다. 이런 구조는 오류의 발생 빈도를 낮추는 역할을 한다.\n","dateCreated":"2017-07-26T01:55:25+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2017-07-26T01:55:25+09:00","description":"","headline":"RxJS가 해결하려고했던 문제3 - 로직 처리의 오류","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2017/07/26/rxjsbook3/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2017/07/26/rxjsbook3/","keywords":"rxjs, book, draft, high-order function, operator, logic"}</script>
+    <meta name="description" content="오늘 소개할 부분은웹어플리케이션 개발시 발생할 수 있는 로직 오류에 대한 문제를 RxJS는 어떻게 접근했는지에 대한 이야기이다.  웹어플리케이션의 로직웹어플리케이션은 로직에 근거하여 전달받은 입력값을 이용하여 새로운 결과를 반환하거나 표현한다.여기서 로직은 산술적인 로직이 될 수 있고 비즈니스적인 로직이 될수 있다. 또는 if문과 같이 간단한 프로그램의 흐">
+<meta name="keywords" content="rxjs,book,draft,high-order function,operator,logic">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="RxJS가 해결하려고했던 문제3 - 로직 처리의 오류">
+<meta property="og:url" content="http://sculove.github.io/blog/2017/07/26/rxjsbook3/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="오늘 소개할 부분은웹어플리케이션 개발시 발생할 수 있는 로직 오류에 대한 문제를 RxJS는 어떻게 접근했는지에 대한 이야기이다.  웹어플리케이션의 로직웹어플리케이션은 로직에 근거하여 전달받은 입력값을 이용하여 새로운 결과를 반환하거나 표현한다.여기서 로직은 산술적인 로직이 될 수 있고 비즈니스적인 로직이 될수 있다. 또는 if문과 같이 간단한 프로그램의 흐">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/07/26/rxjsbook3/userscreenshot.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/07/26/rxjsbook3/logic.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/07/26/rxjsbook3/advance_logic.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/07/26/rxjsbook3/linked-observable.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/07/26/rxjsbook3/rx_process.png">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJS가 해결하려고했던 문제3 - 로직 처리의 오류">
+<meta name="twitter:description" content="오늘 소개할 부분은웹어플리케이션 개발시 발생할 수 있는 로직 오류에 대한 문제를 RxJS는 어떻게 접근했는지에 대한 이야기이다.  웹어플리케이션의 로직웹어플리케이션은 로직에 근거하여 전달받은 입력값을 이용하여 새로운 결과를 반환하거나 표현한다.여기서 로직은 산술적인 로직이 될 수 있고 비즈니스적인 로직이 될수 있다. 또는 if문과 같이 간단한 프로그램의 흐">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2017/07/26/rxjsbook3/userscreenshot.png">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            RxJS가 해결하려고했던 문제3 - 로직 처리의 오류
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-07-26T01:55:25+09:00">
+	
+		    Jul 26, 2017
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Tech/">Tech</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>오늘 소개할 부분은<br>웹어플리케이션 개발시 발생할 수 있는 <code>로직 오류에 대한 문제</code>를 RxJS는 어떻게 접근했는지에 대한 이야기이다.</p>
+<hr>
+<h3 id="웹어플리케이션의-로직"><a href="#웹어플리케이션의-로직" class="headerlink" title="웹어플리케이션의 로직"></a>웹어플리케이션의 로직</h3><p>웹어플리케이션은 로직에 근거하여 전달받은 입력값을 이용하여 새로운 결과를 반환하거나 표현한다.<br>여기서 로직은 산술적인 로직이 될 수 있고 비즈니스적인 로직이 될수 있다. 또는 if문과 같이 간단한 프로그램의 흐름을 담당하는 부분일 수도 있다.</p>
+<p>화면에 사용자 정보를 표현하는 UI 작성하는 예를 생각해보자. (예제에서 사용하는 API는 스타워즈 등장인물을 조회한다)<br>DB로부터 조회한 사용자 목록 데이터가 입력값이라면 이 값을 바탕으로 우리는 다양한 처리를 한다.</p>
+<ul>
+<li>성별이 “남”과 “여”인 사용자만 추출한다 (스타워즈 등장인물은 로봇과 같이 성별이 없는 사용자도 있다)</li>
+<li>사용자의 이름, 키, 몸무게를 표시한다.</li>
+<li>사용자의 성별에 맞게 아이콘을 화면에 표시한다.</li>
+<li>사용자의 표준 체중을 계산하여 표시한다.<blockquote>
+<p>BROCA 방식</p>
+<ul>
+<li>남자 표준체중 = (키 - 100) × 0.9</li>
+<li>여자 표준체중 = (키 - 105) × 0.9</li>
+</ul>
+<p>BMI 방식</p>
+<ul>
+<li>남자 표준체중 = 키/100 _ 키/100 _ 22</li>
+<li>여자 표준체중 = 키/100 _ 키/100 _ 21</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">xhr.onreadystatechange = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (xhr.readyState == <span class="number">4</span> &amp;&amp; xhr.status == <span class="number">200</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> jsonData = <span class="built_in">JSON</span>.parse(xhr.responseText);</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">"users"</span>).innerHTML = process(jsonData);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line">xhr.open(<span class="string">"GET"</span>, <span class="string">"http://swapi.co/api/people/"</span>);</span><br><span class="line">xhr.send();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 데이터를 처리하는 함수</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">process</span>(<span class="params">people</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> html = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> user <span class="keyword">of</span> people.results) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="regexp">/male|female/</span>.test(user.gender)) &#123;</span><br><span class="line">      <span class="keyword">let</span> broca;</span><br><span class="line">      <span class="keyword">let</span> bmi;</span><br><span class="line">      <span class="keyword">if</span> (user.gender == <span class="string">"male"</span>) &#123;</span><br><span class="line">        broca = (user.height - <span class="number">100</span> * <span class="number">0.9</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">        bmi = ((((user.height / <span class="number">100</span>) * user.height) / <span class="number">100</span>) * <span class="number">22</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        broca = (user.height - <span class="number">100</span> * <span class="number">0.9</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">        bmi = ((((user.height / <span class="number">100</span>) * user.height) / <span class="number">100</span>) * <span class="number">21</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">const</span> obesityUsingBroca = (((user.mass - broca) / broca) * <span class="number">100</span>).toFixed(</span><br><span class="line">        <span class="number">2</span></span><br><span class="line">      );</span><br><span class="line">      <span class="keyword">const</span> obesityUsingBmi = (((user.mass - bmi) / bmi) * <span class="number">100</span>).toFixed(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">      html.push(<span class="string">`&lt;li class='card'&gt;</span></span><br><span class="line"><span class="string">			  &lt;dl&gt;</span></span><br><span class="line"><span class="string">			      &lt;dt&gt;<span class="subst">$&#123;user.name&#125;</span> &lt;i class="fa fa-<span class="subst">$&#123;user.gender&#125;</span>"&gt;&lt;/i&gt;&lt;/dt&gt;</span></span><br><span class="line"><span class="string">			      &lt;dd&gt;&lt;span&gt;키 : &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;user.height&#125;</span> cm&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			      &lt;dd&gt;&lt;span&gt;몸무게: &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;user.mass&#125;</span> kg&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			      &lt;dd&gt;&lt;span&gt;BROCA 표준체중 : &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;broca&#125;</span> kg&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			      &lt;dd&gt;&lt;span&gt;BROCA 비만도 : <span class="subst">$&#123;obesityUsingBroca&#125;</span>&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			      &lt;dd&gt;&lt;span&gt;BMI 표준체중 : &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;bmi&#125;</span> kg&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			      &lt;dd&gt;&lt;span&gt;BMI 비만도 : <span class="subst">$&#123;obesityUsingBmi&#125;</span>&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			  &lt;/dl&gt;</span></span><br><span class="line"><span class="string">		      &lt;/li&gt;`</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> html.join(<span class="string">""</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<img src="/blog/2017/07/26/rxjsbook3/userscreenshot.png">
+
+<p>원래 조회했던 데이터는 온데 간데 없고 그 데이터로부터 생산된 새로운 정보들을 사용하고 있다.<br>위 예제는 사용자 체중과 키를 이용하여 성별에 따라 비만도 값을 계산하고 성별 아이콘을 화면에 표시한다.</p>
+<p>우리는 알게 모르게 데이터를 추출하고 변환하는 작업을 빈번하게 하고 있다.<br>복수 데이터를 처리하기 위해서는 반복문을 사용하고, 상황에 따라 데이터를 추출하거나 접근하기 위해서 분기문을 사용한다.<br>또한, 상황을 기억하거나 추출된 정보를 임시로 기억하기 위해서 변수를 사용한다.</p>
+<h3 id="로직의-복잡성-그리고-오류"><a href="#로직의-복잡성-그리고-오류" class="headerlink" title="로직의 복잡성 그리고 오류"></a>로직의 복잡성 그리고 오류</h3><p>반복문과 분기문 그리고 변수는 우리 코드를 복잡하게 만든다. 반복문은 우리 코드의 가독성을 떨어뜨리고 분기문은 우리가 확인해야할 프로그램의 흐름을 여러 개로 만든다. 더군다나 우리가 기억해 놓은 변수의 값은 누군가에 의해 변경될 수 있다. 변수의 값이 변하면 우리가 의도했던대로 흐름으로 프로그램이 동작하지 않을 수 있다.<br>이렇게 반복문과 분기문 그리고 변수는 우리 코드의 복잡도를 높이고 가독성을 떨어뜨리고, 결국에는 오류의 발생 빈도를 높인다.</p>
+<h4 id="반복문과-분기문"><a href="#반복문과-분기문" class="headerlink" title="반복문과 분기문"></a>반복문과 분기문</h4><p>로직의 복잡성을 줄이는 가장 간단한 방법으로는 기능을 쪼개는 것이다. 기능별로 쪼갠다는게 단순히 구역별로 쪼개게 되면 기능의 의미를 명확하게 드러내지 못한다. 더불어 이런 코드는 재사용성을 떨어뜨린다.</p>
+<p>이렇게 기능을 쪼개는 일이 쉬운 일이 아닌 이유는 코드의 대다수는 다음과 같이 로직과 반복문, 분기문의 결합으로 구성되어 있기 때문이다.</p>
+<img src="/blog/2017/07/26/rxjsbook3/logic.png">
+
+<p>코드에서 반복문과 분기문을 모두 제거한다는 것은 사실상 불가능하다. 하지만 기능 단위로 분리 할 수 있다면 기능을 추상화 할 수 있고, 이로 인해 로직의 복잡성을 줄일 수 있다.</p>
+<h4 id="변수는-오류의-시작"><a href="#변수는-오류의-시작" class="headerlink" title="변수는 오류의 시작"></a>변수는 오류의 시작</h4><p>변수를 사용한다는 의미는 오류를 발생시킬 수 있는 확률을 높일 수 있다. 변수는 변경될 수 있는 값이기 때문에 유용하다. 반면, 의도치 않게 이 값이 바뀔 경우에 우리는 오류에 직면하게 된다.<br>브라우저 환경의 자바스크립트에서는 싱글 쓰레드 구조이기 때문에 Mutil Thread의 사용으로 인한 동시성 문제는 자주 발생하지 않는다. 하지만 DOM에 등록된 이벤트 핸들러로 인해 변수의 값이 변경되거나 비동기 행위로 인해 외부로 노출된 변수의 값들이 변경 될 수 있다.</p>
+<blockquote>
+<p>WebWorker와 같은 기술 스펙을 사용하면 Mutil Thread 기술을 사용할 수 있지만 브라우저는 기본적으로 하나의 메인 스레드에서 모든 작업이 이루어 진다.</p>
+</blockquote>
+<p>따라서, 우리는 변수의 노출 범위를 제한하거나 제거함으로써 변수의 값이 외부에 의해 변경되지 않고 개발자의 의도에 따라 정확하게 변경될 수 있도록 보장하여만 한다.</p>
+<h3 id="자바스크립트의-솔루션"><a href="#자바스크립트의-솔루션" class="headerlink" title="자바스크립트의 솔루션"></a>자바스크립트의 솔루션</h3><p>다행히도 자바스크립트는 이런 면에서는 꽤나 훌륭한 솔루션을 제공하고 있다.<br>함수형 프로그래밍의 특성을 가진 자바스크립트 함수를 이용하면 실제 로직과 상관이 없는 반복문, 분기문을 분리할 수 있다. 더불어 변수 또한 제거해 나갈 수 있다.<br>이렇게 함으로써 로직의 의미를 더욱 명확히 할 수 있으며 재사용성을 더욱 높일 수 있다.</p>
+<blockquote>
+<p>자바스크립트 함수는 일급객체이다.<br>일급 객체(First-class object)는 다음과 같은 특성을 가지고 있다.</p>
+<ul>
+<li>변수 혹은 데이터 구조에 저장할 수 있다<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> savedFunction = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>파라미터로 전달할 수 있다.<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params">f, value</span>) </span>&#123;&#125;;</span><br><span class="line"> foo(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">     <span class="built_in">console</span>.log(<span class="string">"함수를 파라미터로 전달 할 수 있다"</span>);</span><br><span class="line"> &#125;, <span class="string">"값"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>반환값으로 사용할 수 있다.<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">       <span class="built_in">console</span>.log(<span class="string">"함수를 반환할 수 있다"</span>);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<h4 id="로직의-분리"><a href="#로직의-분리" class="headerlink" title="로직의 분리"></a>로직의 분리</h4><p>앞의 process 함수를 기능 단위의 로직과 반복문, 분기문으로 분리해보자.<br>process 함수는 다음과 같은 구조로 되어 있다.</p>
+<img src="/blog/2017/07/26/rxjsbook3/advance_logic.png">
+
+<p>여기에서 우리의 주요 관심사는 성별에 따라 비만도를 구하는 로직과 사용자별 HTML을 만드는 로직이다.<br>이 부분을 별도의 함수로 만들어보자.</p>
+<p>표준 체중과 비만도를 계산하는 함수는 height, mass, gender을 입력값으로 받아서 BROCA와 BMI 방식의 비만도와 표준 체중을 반환한다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 표준 체중과 비만도를 계산하는 함수</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">logic</span>(<span class="params">height, mass, gender</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">let</span> broca = (height - (gender === <span class="string">"male"</span> ? <span class="number">100</span> : <span class="number">105</span>)) * <span class="number">0.9</span>;</span><br><span class="line">	<span class="keyword">let</span> bmi = height / <span class="number">100</span> * height / <span class="number">100</span> * (gender === <span class="string">"male"</span> ? <span class="number">22</span> : <span class="number">21</span>);</span><br><span class="line">	<span class="keyword">if</span> (gender == <span class="string">"male"</span>) &#123;</span><br><span class="line">		broca = (height - <span class="number">100</span> * <span class="number">0.9</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">		bmi = (height / <span class="number">100</span> * height / <span class="number">100</span> * <span class="number">22</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		broca = (height - <span class="number">100</span> * <span class="number">0.9</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">		bmi = (height / <span class="number">100</span> * height / <span class="number">100</span> * <span class="number">21</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">const</span> obesityUsingBroca = ((mass - broca) / broca * <span class="number">100</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">	<span class="keyword">const</span> obesityUsingBmi = ((mass - bmi) / bmi * <span class="number">100</span>).toFixed(<span class="number">2</span>);</span><br><span class="line">	<span class="keyword">return</span> &#123;</span><br><span class="line">		broca,</span><br><span class="line">		bmi,</span><br><span class="line">		obesityUsingBroca,</span><br><span class="line">		obesityUsingBmi</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>사용자 정보별 HTML을 만드는 함수는 user 정보를 받아서 string 형태의 html을 반환한다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 사용자 정보를 표현하기 위해 HTML을 만드는 함수</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">makeHtml</span>(<span class="params">user</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">`&lt;li class='card'&gt;</span></span><br><span class="line"><span class="string">		&lt;dl&gt;</span></span><br><span class="line"><span class="string">			&lt;dt&gt;<span class="subst">$&#123;user.name&#125;</span> &lt;i class="fa fa-<span class="subst">$&#123;user.gender&#125;</span>"&gt;&lt;/i&gt;&lt;/dt&gt;</span></span><br><span class="line"><span class="string">			&lt;dd&gt;&lt;span&gt;키 : &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;user.height&#125;</span> cm&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			&lt;dd&gt;&lt;span&gt;몸무게: &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;user.mass&#125;</span> kg&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			&lt;dd&gt;&lt;span&gt;BROCA 표준체중 : &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;user.broca&#125;</span> kg&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			&lt;dd&gt;&lt;span&gt;BROCA 비만도 : <span class="subst">$&#123;user.obesityUsingBroca&#125;</span>&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			&lt;dd&gt;&lt;span&gt;BMI 표준체중 : &lt;/span&gt;&lt;span&gt;<span class="subst">$&#123;user.bmi&#125;</span> kg&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">			&lt;dd&gt;&lt;span&gt;BMI 비만도 : <span class="subst">$&#123;user.obesityUsingBmi&#125;</span>&lt;/span&gt;&lt;/dd&gt;</span></span><br><span class="line"><span class="string">		&lt;/dl&gt;</span></span><br><span class="line"><span class="string">	&lt;/li&gt;`</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>logic, makeHtml함수를 이용하면 다음과 같이 process 함수를 작성할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">process</span>(<span class="params">people</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> html = [];</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">const</span> user <span class="keyword">of</span> people.results) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="regexp">/male|female/</span>.test(user.gender)) &#123;</span><br><span class="line">      <span class="keyword">const</span> result = logic(user.height, user.mass, user.gender);</span><br><span class="line">      <span class="built_in">Object</span>.assign(user, result);</span><br><span class="line">      html.push(makeHtml(user));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> html.join(<span class="string">""</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>logic, makeHtml 함수를 만듦으로서 우리는 핵심 로직을 작성는데 집중할 수 있게 되었다.<br>더불어 logic, makeHtml 함수도 재사용 할 수 있는 단위 함수가 되었다.</p>
+<h4 id="반복문-분기문-그리고-변수와의-이별"><a href="#반복문-분기문-그리고-변수와의-이별" class="headerlink" title="반복문, 분기문, 그리고 변수와의 이별"></a>반복문, 분기문, 그리고 변수와의 이별</h4><p>위에 개선한 process도 좋은 코드이다. 우리는 구현 로직에 더 집중할 수 있게 되었다.<br>하지만, 흐름을 제어하는 반복문과 분기문은 여전히 process에 존재한다.<br>코드가 크면 클수록 process에 존재하는 반복문과 조건문은 우리 코드의 가독성을 떨어뜨릴 것이다. 더불어 html, result 같은 변수가 여전히 존재하기 때문에 우리는 항상 오류에 노출될 것이다.</p>
+<p>이번에는 ES5에서 제공하는 Array의 filter, map, reduce와 같은 고차함수(High-order function)를 이용하여 process를 개선해 보자.</p>
+<blockquote>
+<h3 id="고차함수-Higher-order-function"><a href="#고차함수-Higher-order-function" class="headerlink" title="고차함수 (Higher-order function)"></a>고차함수 (Higher-order function)</h3><ul>
+<li>다른 함수를 인자로 받거나 그 결과로 함수를 반환하는 함수.<br>출처: wikipedia <a href="https://en.wikipedia.org/wiki/Higher-order_function" rel="external nofollow noopener noreferrer" target="_blank">https://en.wikipedia.org/wiki/Higher-order_function</a></li>
+<li>고차 함수는 변경되는 주요 부분을 함수로 제공함으로서 동일한 패턴 내에 존재하는 문제를 손쉽게 해결할 수 있는 고급 프로그래밍 기법이다.</li>
+<li>고차 함수를 이용하면 함수의 합성, 변형과 같은 작업을 손쉽게 할수 있다. 더불어 Currying, Memoization과 같은 기법도 사용할 수 있다.<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> twice = <span class="function">(<span class="params">f, v</span>) =&gt;</span> f(f(v));</span><br><span class="line"><span class="keyword">const</span> fn = <span class="function"><span class="params">v</span> =&gt;</span> v + <span class="number">3</span>;</span><br><span class="line"><span class="built_in">console</span>.log(twice(fn, <span class="number">7</span>)); <span class="comment">// 13</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</blockquote>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">process</span>(<span class="params">people</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> people.results</span><br><span class="line">	  .filter(<span class="function"><span class="params">user</span> =&gt;</span> <span class="regexp">/male|female/</span>.test(user.gender))</span><br><span class="line">		.map(<span class="function"><span class="params">user</span> =&gt;</span> <span class="built_in">Object</span>.assign(</span><br><span class="line">      user,</span><br><span class="line">      logic(user.height, user.mass, user.gender)</span><br><span class="line">		))</span><br><span class="line">		.reduce(<span class="function">(<span class="params">acc, user</span>) =&gt;</span> &#123;</span><br><span class="line">			acc.push(makeHtml(user));</span><br><span class="line">			<span class="keyword">return</span> acc;</span><br><span class="line">		&#125;, [])</span><br><span class="line">		.join(<span class="string">""</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>if문은 filter로 변환하고, 값을 변환해야하는 경우에는 map을 이용하고, 축적된 데이터를 반환해야하는 경우에는 reduce를 이용하였다.<br>각각의 고차함수에 전달되는 함수는 외부의 변수에 영향을 미치지도 않고, 영향을 받지도 않는 함수이다.<br>전달된 함수는 항상 같은 입력이 주어지면, 항상 같은 출력을 반환한다.<br>이런 함수를 함수형 프로그래밍에서는 <code>순수함수</code>라고 한다.</p>
+<blockquote>
+<p>순수함수와 함수형 프로그래밍에 대한 내용은 <code>부록. 함수형 프로그래밍 (Functional Programming)</code>을 참조하기 바란다.</p>
+</blockquote>
+<p>개선된 process에서는 반복문, 분기문, 변수가 존재하지 않는다.<br>핵심 로직은 분리되었고 코드의 흐름은 단일화되었다. 더불어 변수를 사용하지 않음으로서 오류의 발생 빈도도 크게 줄었다.</p>
+<h2 id="RxJS는-어떻게-개선하였나"><a href="#RxJS는-어떻게-개선하였나" class="headerlink" title="RxJS는 어떻게 개선하였나?"></a>RxJS는 어떻게 개선하였나?</h2><p>RxJS 또한 ES5 Array의 고차 함수와 같은 <code>operator를 제공</code>함으로써 로직에 존재하는 분기문과 반복문, 그리고 변수를 제거하려고 하였다.</p>
+<h3 id="Immutable-객체-Observable"><a href="#Immutable-객체-Observable" class="headerlink" title="Immutable 객체 Observable"></a>Immutable 객체 Observable</h3><p>ES5 Array의 고차함수들이 반환값으로 새로운 Array 객체를 반환하여 각각에 영향을 미치지 않도록 하는 것과 같이 RxJS의 operator는 항상 새로운 Observable을 반환함으로써 Array의 고차함수와 같이 <code>불변 객체 (Immutable Object)</code>를 반환한다.<br>불변 객체는 생성 후 그 상태를 바꿀 수 없는 객체이다. 불변 객체는 외부에서 값을 변경할 수 없기 때문에 불변 객체를 사용하는 것만으로도 프로그램의 복잡도가 줄어든다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arr = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>];</span><br><span class="line"><span class="keyword">var</span> mappedArr = arr.map(<span class="function"><span class="params">v</span> =&gt;</span> v);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(arr === mappedArr); <span class="comment">// false</span></span><br></pre></td></tr></table></figure>
+
+<p>Array와 다른점이 있다면 Array의 경우는 새로운 Array 객체 생성 작업만 하지만 Observable은 새로운 Observable를 만들고, 그 Observable이 operator를 호출한 Observable을 내부적으로 subscribe 하는 형태를 유지한다. 즉, Linked list 형태로 기존 Observable 객체와 새롭게 만든 Observable 객체를 operator로 연결하고 있다.</p>
+<img src="/blog/2017/07/26/rxjsbook3/linked-observable.png" title="linked-observable">
+
+<p>한 예로 Observable.map은 다음과 같이 구현되어 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Observable.prototype.map = <span class="function"><span class="keyword">function</span>(<span class="params">transformationFn</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> source = <span class="keyword">this</span>;</span><br><span class="line">  <span class="keyword">const</span> result = <span class="keyword">new</span> Rx.Observable(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 새로운 Observable은 현재의 Observable을 subscribe 한다.</span></span><br><span class="line">    source.subscribe(</span><br><span class="line">      <span class="comment">// 현재의 Observable에서 전달된 데이터를 변경하여 전달한다.</span></span><br><span class="line">      <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">        observer.next(transformationFn(x));</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="function"><span class="keyword">function</span>(<span class="params">err</span>) </span>&#123;</span><br><span class="line">        observer.error(err);</span><br><span class="line">      &#125;,</span><br><span class="line">      <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        observer.complete();</span><br><span class="line">      &#125;</span><br><span class="line">    );</span><br><span class="line">  &#125;);</span><br><span class="line">  <span class="keyword">return</span> result;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>이런 구조를 취함으로서 <code>source부터 전달된 데이터, 에러, 종료여부가 Observable의 operator들을 통해 전달되거나 변경되어 구독한 Observer에게 전달할 수 있게 된다.</code></p>
+<p>앞에서 설명한 표준체중과 비만도 조회 예를 Observable로 변경해보자.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ajax$ = <span class="keyword">new</span> Rx.Observable(<span class="function"><span class="params">observer</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> xhr = <span class="keyword">new</span> XMLHttpRequest();</span><br><span class="line">  xhr.onreadystatechange = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (xhr.readyState == <span class="number">4</span> &amp;&amp; xhr.status == <span class="number">200</span>) &#123;</span><br><span class="line">      <span class="keyword">const</span> jsonData = <span class="built_in">JSON</span>.parse(xhr.responseText);</span><br><span class="line">      <span class="comment">// user 데이터를 user 단위로 변환하여 전달</span></span><br><span class="line">      jsonData.results.forEach(<span class="function"><span class="params">v</span> =&gt;</span> observer.next(v));</span><br><span class="line">      observer.complete();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line">  xhr.open(<span class="string">"GET"</span>, <span class="string">"http://swapi.co/api/people/"</span>);</span><br><span class="line">  xhr.send();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">ajax$</span><br><span class="line">  .filter(<span class="function"><span class="params">user</span> =&gt;</span> <span class="regexp">/male|female/</span>.test(user.gender))</span><br><span class="line">  .map(<span class="function"><span class="params">user</span> =&gt;</span> <span class="built_in">Object</span>.assign(user, logic(user.height, user.mass, user.gender)))</span><br><span class="line">  .reduce(<span class="function">(<span class="params">acc, user</span>) =&gt;</span> &#123;</span><br><span class="line">    acc.push(makeHtml(user));</span><br><span class="line">    <span class="keyword">return</span> acc;</span><br><span class="line">  &#125;, [])</span><br><span class="line">  .subscribe(<span class="function"><span class="params">v</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">"users"</span>).innerHTML = v;</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>이전 우리가 개선한 process 소스와 큰 차이가 없다.</p>
+<blockquote>
+<p>원리 설명을 위해 부득이하게 사용자 리스트를 사용자로 바꿔 전달하였다.<br>일반적으로는 Ajax를 통해 전달 받은 정보를 바탕으로 operator를 적용한다.</p>
+</blockquote>
+<p>차이라면 다음과 같이 ajax$ Observable를 통해 전달 받은 데이터가 filter, map, reduce를 거쳐 observer에게 전달되는 구조로 되어있다는 것이다.</p>
+<img src="/blog/2017/07/26/rxjsbook3/rx_process.png">
+
+<h2 id="RxJS가-제공하는-Operator"><a href="#RxJS가-제공하는-Operator" class="headerlink" title="RxJS가 제공하는 Operator"></a>RxJS가 제공하는 Operator</h2><p>다음은 공식 홈페이지에서 제공하는 operator 목록이다.<br><a href="http://reactivex.io/rxjs/manual/overview.html#categories-of-operators" rel="external nofollow noopener noreferrer" target="_blank">http://reactivex.io/rxjs/manual/overview.html#categories-of-operators</a></p>
+<table>
+<thead>
+<tr>
+<th>카테고리</th>
+<th>operator</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>생성 operator</td>
+<td>ajax, bindCallback, bindNodeCallback, create, defer, empty, from, fromEvent, fromEventPattern, fromPromise, generate, interval, never, of,repeat ,repeatWhen, range ,throw ,timer</td>
+</tr>
+<tr>
+<td>변환 operator</td>
+<td>buffer, bufferCount, bufferTime, bufferToggle, bufferWhen, concatMap, concatMapTo, exhaustMap, expand, groupBy, map, mapTo, mergeMap, mergeMapTo, mergeScan, pairwise, partition, pluck, scan, switchMap, switchMapTo, window, windowCount, windowTime, windowToggle, windowWhen</td>
+</tr>
+<tr>
+<td>추출 operator</td>
+<td>debounce, debounceTime, distinct, distinctKey, distinctUntilChanged, distinctUntilKeyChanged, elementAt, filter, first, ignoreElements, audit, auditTime, last, sample, sampleTime, single, skip, skipUntil, skipWhile, take, takeLast, takeUntil, takeWhile, throttle, throttleTime</td>
+</tr>
+<tr>
+<td>결합 operator</td>
+<td>combineAll, combineLatest, concat, concatAll, exhaust, forkJoin, merge, mergeAll, race, startWith, switch, withLatestFrom, zip, zipAll</td>
+</tr>
+<tr>
+<td>멀티캐스팅 operator</td>
+<td>cache, multicast, publish, publishBehavior, publishLast, publishReplay, share</td>
+</tr>
+<tr>
+<td>에러 처리 operator</td>
+<td>catch, retry, retryWhen</td>
+</tr>
+<tr>
+<td>유틸리티 operator</td>
+<td>do, delay, delayWhen, dematerialize, finally, let, materialize, observeOn, subscribeOn, timeInterval, timestamp, timeout, timeoutWith, toArray, toPromise</td>
+</tr>
+<tr>
+<td>조건.참거짓 operator</td>
+<td>defaultIfEmpty, every, find, findIndex, isEmpty</td>
+</tr>
+<tr>
+<td>수학,누적 operator</td>
+<td>count, max, min, reduce</td>
+</tr>
+</tbody></table>
+<p>RxJS에서 제공하는 operator를 이용하면 Observable을 생성 할 수도 있고 전달된 데이터를 변환하거나 필요한 데이터만을 추출할 수 도 있다.<br>더불어 여러 개의 Observable을 합성하기도 하고, 하나의 Observable을 다른 여러개의 Observable로 나눌 수도 있다.</p>
+<p>RxJS는 정말 많은 operator를 제공한다. operator의 의미에 대해 잘 아는 사람에게는 굉장히 편리하다. 반면 그 의미를 잘 알지 못하는 사람에게는 오히려 진입 장벽이 되기도 한다.<br>이 operator의 기본적인 철학은 <code>함수형 프로그래밍</code>에 그 근간을 두고 있다.<br>아마도 함수형 프로그래밍 언어를 배운 독자라면 꽤 익숙한 이름의 operator들이 있는 것 을 알 수 있다.</p>
+<p>RxJS의 operator는 어휘와 같다.<br>내가 많은 단어와 문장을 알아서 사용하게 되면 나의 편의성이 증가하고 더불어 나의 품격도 높아질수 있다. 하지만, 다른 한편으로는 다른 사람이 내 말을 이해하기 어려워 할 수도 있다.<br>반면 내가 알고 있는 단어와 문장이 적다고 하더라도 의사소통이 될 정도의 단어와 문장을 사용한다면 생활하는데 부족함이 없다. 마찬가지로 RxJS의 모든 operator를 다 알 필요는 없다.<br>카테고리별로 자주쓰는 operator 몇 개를 잘 알고 적용할 수 있다면 충분히 RxJS의 장점을 극대화 할수 있다.<br>따라서, 이 책에서도 RxJS의 모든 Operator를 다루지는 않는다. 주요 카테고리별로 꼭! 알아야하는 RxJS의 Operator를 몇 개를 기준으로 설명을 할 예정이다.<br>자세한 내용은 다음 2부에서 진행하는 실제 프로젝트를 통해 조금씩 익혀나가 보자.</p>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><p>웹어플리케이션의 로직은 반복문, 분기문, 변수에 의해 복잡도가 증가한다. 복잡도가 증가하게되면 이로 인해 코드의 가독성이 떨어지고 결국에는 오류에 직면하게 된다.<br>ES5 Array의 고차함수를 이용하면 반복문, 분기문, 변수를 로직으로부터 분리하고 제거할수 있다. 마찬가지로 RxJS는 ES5 Array의 고차함수와 같은 operator를 제공한다.<br>operator는 Immutable한 Observable를 항상 생성함으로써 외부나 내부에 영향을 미치지 않는다. 이런 구조는 오류의 발생 빈도를 낮추는 역할을 한다.</p>
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/book/">book</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/draft/">draft</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/high-order-function/">high-order function</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/logic/">logic</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/operator/">operator</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/rxjs/">rxjs</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/07/Microsoft/" data-tooltip="Microsoft와의 인연" aria-label="PREVIOUS: Microsoft와의 인연">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/07/26/rxjsbook2/" data-tooltip="RxJS가 해결하려고했던 문제2 - 상태 전파 문제" aria-label="NEXT: RxJS가 해결하려고했던 문제2 - 상태 전파 문제">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/07/26/rxjsbook3/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/07/26/rxjsbook3/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/07/Microsoft/" data-tooltip="Microsoft와의 인연" aria-label="PREVIOUS: Microsoft와의 인연">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/07/26/rxjsbook2/" data-tooltip="RxJS가 해결하려고했던 문제2 - 상태 전파 문제" aria-label="NEXT: RxJS가 해결하려고했던 문제2 - 상태 전파 문제">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/07/26/rxjsbook3/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/07/26/rxjsbook3/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/07/26/rxjsbook3/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/07/26/rxjsbook3/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2017/07/26/rxjsbook3/';
+                 
+                    this.page.identifier = '2017/07/26/rxjsbook3/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>

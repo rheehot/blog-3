@@ -1,0 +1,855 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        RxJS란 무엇인가? - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2017/10/07/rxjsbook4/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"오늘 소개할 부분은 작성 중인 책 2부의 개론에 해당하는 내용이다.이 장을 통해 RxJS의 개발과정의 큰 그림을 다시한번 살펴보기 바란다\n\n1부에서는 RxJS의 본질을 알아가기 위해 RxJS가 고민했던 문제들을 살펴보았다. 2부에서부터는 RxJS 라이브러리에 대해 자세히 알아보자. 이 장을 통해서는 RxJS로 간단한 소스를 구현해보면서 RxJS의 사용법을 익혀보도록 하자.\nRxJSRxJS의 공식 사이트에서는 RxJS에 대해 다음과 같이 정의하고 있다.\n\nRxJS is a library for composing asynchronous and event-based programs by using observable sequences.RxJS는 Observable를 사용하여 비동기 및 이벤트 기반 프로그램을 작성하기 위한 라이브러리이다.\n\n1부에서 필자가 정의한 범용적인 데이터 플로우 솔루션을 지향하는 라이브러리의 국소적인 표현이라고 할수 있다. 특이한 것은 공식 홈페이지에는 RxJS에 대해 이벤트용 lodash 정도라고 생각해라라는 말도 있다.\n\nThink of RxJS as Lodash for events.\n\n앞의 용어가 RxJS의 철학에 대한 정의라면, 뒤의 정의는 실제 사용에 대한 정의라고 볼수 있다.RxJS가 어렵다면 지금은 그냥 비동기 Array/Collection 데이터를 다루는 라이브러리 정도로 생각하고 접근해보자.\n\n\nRxJS 시작하기RxJS 첫번째 예제RxJS로 간단한 예제를 만들어보자.웹 개발시 가장 빈번히 이루어지는 이벤트를 처리하는 예제를 작성해보자.\n페이지를 클릭했을 경우 event.currentTarget 정보를 콘솔로 찍어보도록 하자.\n다음과 같이 간단히 작성할 수 있다.이벤트 핸들러를 만들고, 그 핸들러를 addEventListener를 통해 등록하기만 하면 우리가 원하는 코드를 작성할 수 있다.\n1234const eventHandler = event =&gt; &#123;  console.log(event.currentTarget);&#125;;document.addEventListener(\"click\", eventHandler);\n\n이 코드와 동일한 기능을 RxJS로 작성해 보자.RxJS에서는 이벤트를 Observable로 변환하는 fromEvent 메소드를 제공한다.Observable의 subscribe 메소드를 이용하면 Observer가 Observable을 구독할 수 있다.즉, Observable에서 전달된 데이터를 Observer는 소비할 수 있다.\n12345const click$ = Rx.Observable.fromEvent(document, \"click\"); // observableconst observer = event =&gt; &#123;  console.log(event.currentTarget);&#125;;click$.subscribe(observer);\n\nRxJS에서는 이벤트 핸들러를 만들었던 것과 같이 Observer를 만들고,addEventListener를 통해 이벤트 핸들러를 등록하는 것과 같이 observer를 Observable에 구독(subscribe)하였다.다른 것이 있다면 브라우저를 통해 전달되는 이벤트 정보를 Observable로 변환하는 작업을 추가적으로 하고 있다.\nRxJS 첫번째 예제 개선하기앞에서 살펴본 예제를 살펴보면 실제 우리가 필요한 정보는 click이 아니라 click 될때의 currentTarget 정보이다.\nObservable 인스턴스의 pluck 메소드를 이용하면 이 의도를 코드에 더욱 명확히 나타낼 수 있다.\n\npluck은 사전적으로 “~을 뽑다” 라는 의미이다.추출할 속성들을 “문자열”로 지정할수 있다. 이 함수의 반환값은 새로운 Observable 인스턴스 이다.public pluck(properties: ...string): Observable\n\n다음 코드는 pluck 메소드를 이용하여 코드의 의도를 더욱 분명하게 변경한 예이다.\n12345678const currentTarget$ = Rx.Observable.fromEvent(document, \"click\").pluck(  \"currentTarget\"); // observableconst observer = currentTarget =&gt; &#123;  console.log(currentTarget);&#125;;currentTarget$.subscribe(observer);\n\nclick이 발생하는 시점에 전달된 event 객체의 currentTarget을 전달하는 currentTarget$을 만들 수 있다.Observer는 currentTarget을 구독함으로써 currentTarget 데이터를 전달받을 수 있다.\nRxJS 두번째 예제앞의 예제가 비동기 방식을 RxJS로 구현한 것이라면 이번에는 동기적인 작업을 RxJS로 구현해보자.간단한 예로 사용자 정보를 가지는 배열에서 “촉”나라 사람만 추출하여보자.\n다음과 같이 작성할 수 있다.array의 filter 메소드를 통해 원하는 사용자만을 추출할 수 있다.\n1234567891011121314151617181920212223242526272829303132333435const users = [  &#123;    name: \"유비\",    birthYear: 161,    nationality: \"촉\"  &#125;,  &#123;    name: \"손권\",    birthYear: 182,    nationality: \"오\"  &#125;,  &#123;    name: \"관우\",    birthYear: 160,    nationality: \"촉\"  &#125;,  &#123;    name: \"장비\",    birthYear: 168,    nationality: \"촉\"  &#125;,  &#123;    name: \"조조\",    birthYear: 155,    nationality: \"위\"  &#125;,  &#123;    name: \"손권\",    birthYear: 182,    nationality: \"오\"  &#125;].filter(user =&gt; user.nationality === \"촉\");const log = user =&gt; console.log(user);users.forEach(log);\n\n이 코드와 동일한 기능을 RxJS로 작성해 보자.RxJS에서는 Array를 Observable로 변환하는 from 메소드를 제공한다.\n1234567891011121314151617181920212223242526272829303132333435const users$ = Rx.Observable.from([  &#123;    name: \"유비\",    birthYear: 161,    nationality: \"촉\"  &#125;,  &#123;    name: \"손권\",    birthYear: 182,    nationality: \"오\"  &#125;,  &#123;    name: \"관우\",    birthYear: 160,    nationality: \"촉\"  &#125;,  &#123;    name: \"장비\",    birthYear: 168,    nationality: \"촉\"  &#125;,  &#123;    name: \"조조\",    birthYear: 155,    nationality: \"위\"  &#125;,  &#123;    name: \"손권\",    birthYear: 182,    nationality: \"오\"  &#125;]).filter(user =&gt; user.nationality === \"촉\");const observer = user =&gt; console.log(user);users$.subscribe(observer);\n\nRxJS에서는 추출된 사용자를 콘솔에 출력하기 위해 log를 만든 것과 같이 Observer를 만들고,forEach를 통해 log 함수를 호출하는 것과 같이 observer를 Observable에 구독(subscribe)하였다.다른 것이 있다면 Array 객체를 Observable로 변환하는 작업을 추가적으로 하고 있다.\nRxJS를 이용하면 데이터 소스(이벤트, 배열)를 Observable로 만들기만 하면 비동기 방식도 동기 방식도 모두 동일한 행태로 개발을 할수 있다.\nRxJS 4대 천왕RxJS에서는 다루는 중요 개념은 다음과 같다.\n\nObservable\nOperator\nObserver\nSubscription\nSubject\nScheduler\n\n이 장에서는 이 중 항상 사용하게 되는 4개 개념인 Observable, Operator, Observer, Subscription에 대해 다루기로 하자.나머지 Subject와 Scheduler는 뒷 장에서 다루도록 하겠다.\nObservable시간을 축으로 연속적인 데이터를 저장하는 컬렉션을 표현한 객체이다. 데이터를 제공하는 소스나 Observabler과 연결되어 데이터를 제공한다. Operator와 함께 RxJS의 핵심 중의 핵심인 개념이다. 이를 stream이라고 부른다.\n\n\nOperatorObservable의 static 메소드나 인스턴스의 메소드로 Observable 객체를 반환하는 메소드를 Operator라고 한다. Operator는 현재의 Observable Instance를 기반으로 항상 새로운 Observable instance를 반환한다.Operator는 Observable을 생성하기도 하고, 각각의 Observable을 연결하기도 한다. 또한, Observable을 분리하거나 합치기도 한다.위 예제에서는 Observable.fromEvent operator를 이용하여 Observable을 생성하고 Observable 인스턴스의 pluck operator를 이용하여 데이터를 변경하였다.\n\n\nObserverObservable에 의해 전달된 데이터를 소비하는 주체이다. Observer는 next, error, complete 함수를 가진 객체를 가리킨다. Observable에 의해 데이터가 전달될때는 next가 호출되고, 에러가 발생했을 때는 error 함수, 데이터 전달이 완료되었을 때는 complete함수가 호출되어진다.Observer은 Observable과 subscribe 메소드를 통해 연결되어 진다.\n\nObservable#subscribe 함수subscribe는 Observer를 파라미터로 받는다.\n1. Observer 객체를 전달하는 subscribe 사용 예12345678const observer = &#123;   next: x =&gt; console.log(\"Observer가 Observable로부터 받은 데이터: \" + x),   error: err =&gt;     console.error(\"Observer가 Observable로부터 받은 에러 데이터: \" + err),   complete: () =&gt;     console.log(\"Observer가 Observable로부터 종료 되었다는 알림을 받은 경우\")&#125;;click$.subscribe(observer); // observer 객체를 파라미터로 받는다.\n\n\n2. next 콜백함수를 전달하는 subscribe 사용 예12// observer의 next 함수를 파라미터로 받는다.click$.subscribe(x =&gt; console.log(\"Observer가 Observable로부터 받은 데이터: \" + x));\n\n\n3. next, error, complete 콜백함수를 전달하는 subscribe 사용 예12345 // observer의 next, error, complete 함수를 파라미터로 받는다.  click$.subscribe(x =&gt; console.log(\"Observer가 Observable로부터 받은 데이터: \" + x),    error: err =&gt; console.error(\"Observer가 Observable로부터 받은 에러 데이터: \" + err),    complete: () =&gt; console.log(\"Observer가 Observable로부터 종료 되었다는 알림을 받은 경우\"));\n\nSubscriptionObservable.subscribe의 반환값이다. Subscription 객체는 자원의 해제를 담당한다. 등록된 Observable의 데이터를 더이상 전달 받고 싶지 않을 경우 unsubscribe 메소드를 호출하여 자원을 해제한다.\n\n\n12345// ...const subscription = currentTarget$.subscribe(observer);// subscription으로 자원 해제가 가능subscription.unsubscribe();\n\nRxJS 개발 방법위에서 제시한 예제를 rxjs의 4개 개념으로 표현하면 다음과 같다.\n\n\n이벤트를 Observable로 변환하고 Observable의 pluck, filter 메소드를 통해 데이터를 변경한다. 데이터를 처리할 Observer를 만들고, Observable의 subscribe 메소드를 통해 Observer를 구독한다.\nRxJS를 사용하여 개발할 때의 프로세스는 대부분 다음과 같은 과정을 거친다.\n\n첫째. 데이터 소스를 Observable로 변경한다.\n둘째. Observable의 operator를 통해 데이터를 변경하거나 추출한다.또는 여러 개의 Observable을 하나의 Observable로 합치거나 하나의 Observable을 여러 개의 Observable로 만든다.\n셋째. 원하는 데이터를 받아 처리하는 Observer를 만든다.\n넷째. Observable의 subscribe를 통해 Observer를 등록한다.\n다섯째. Observable 구독을 정지하고 자원을 해지한다.\n\n정리이번 장에서는 RxJS로 간단한 예제를 작성해 봄으로서 RxJS의 4가지 중요한 개념에 대해 살펴보았다. 더불어 RxJS개발 프로세스를 간단하게나마 살펴볼수 있었다.다음 장에서는 실제로 Observable을 만드는 방법에 대해 살펴보기로 하자.\n","dateCreated":"2017-10-07T15:09:27+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2017-10-07T15:09:27+09:00","description":"오늘 소개할 부분은 작성 중인 책 2부의 개론에 해당하는 내용이다.이 장을 통해 RxJS의 개발과정의 큰 그림을 다시한번 살펴보기 바란다\n\n1부에서는 RxJS의 본질을 알아가기 위해 RxJS가 고민했던 문제들을 살펴보았다. 2부에서부터는 RxJS 라이브러리에 대해 자세히 알아보자. 이 장을 통해서는 RxJS로 간단한 소스를 구현해보면서 RxJS의 사용법을 익혀보도록 하자.\nRxJSRxJS의 공식 사이트에서는 RxJS에 대해 다음과 같이 정의하고 있다.\n\nRxJS is a library for composing asynchronous and event-based programs by using observable sequences.RxJS는 Observable를 사용하여 비동기 및 이벤트 기반 프로그램을 작성하기 위한 라이브러리이다.\n\n1부에서 필자가 정의한 범용적인 데이터 플로우 솔루션을 지향하는 라이브러리의 국소적인 표현이라고 할수 있다. 특이한 것은 공식 홈페이지에는 RxJS에 대해 이벤트용 lodash 정도라고 생각해라라는 말도 있다.\n\nThink of RxJS as Lodash for events.\n\n앞의 용어가 RxJS의 철학에 대한 정의라면, 뒤의 정의는 실제 사용에 대한 정의라고 볼수 있다.RxJS가 어렵다면 지금은 그냥 비동기 Array/Collection 데이터를 다루는 라이브러리 정도로 생각하고 접근해보자.","headline":"RxJS란 무엇인가?","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2017/10/07/rxjsbook4/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2017/10/07/rxjsbook4/","keywords":"rxjs, book, draft"}</script>
+    <meta name="description" content="오늘 소개할 부분은 작성 중인 책 2부의 개론에 해당하는 내용이다.이 장을 통해 RxJS의 개발과정의 큰 그림을 다시한번 살펴보기 바란다  1부에서는 RxJS의 본질을 알아가기 위해 RxJS가 고민했던 문제들을 살펴보았다. 2부에서부터는 RxJS 라이브러리에 대해 자세히 알아보자. 이 장을 통해서는 RxJS로 간단한 소스를 구현해보면서 RxJS의 사용법을">
+<meta name="keywords" content="rxjs,book,draft">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="RxJS란 무엇인가?">
+<meta property="og:url" content="http://sculove.github.io/blog/2017/10/07/rxjsbook4/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="오늘 소개할 부분은 작성 중인 책 2부의 개론에 해당하는 내용이다.이 장을 통해 RxJS의 개발과정의 큰 그림을 다시한번 살펴보기 바란다  1부에서는 RxJS의 본질을 알아가기 위해 RxJS가 고민했던 문제들을 살펴보았다. 2부에서부터는 RxJS 라이브러리에 대해 자세히 알아보자. 이 장을 통해서는 RxJS로 간단한 소스를 구현해보면서 RxJS의 사용법을">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/10/07/rxjsbook4/observable_detail.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/10/07/rxjsbook4/operator_detail.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/10/07/rxjsbook4/subscription_detail.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2017/10/07/rxjsbook4/rxjs-structure1.png">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RxJS란 무엇인가?">
+<meta name="twitter:description" content="오늘 소개할 부분은 작성 중인 책 2부의 개론에 해당하는 내용이다.이 장을 통해 RxJS의 개발과정의 큰 그림을 다시한번 살펴보기 바란다  1부에서는 RxJS의 본질을 알아가기 위해 RxJS가 고민했던 문제들을 살펴보았다. 2부에서부터는 RxJS 라이브러리에 대해 자세히 알아보자. 이 장을 통해서는 RxJS로 간단한 소스를 구현해보면서 RxJS의 사용법을">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2017/10/07/rxjsbook4/observable_detail.png">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            RxJS란 무엇인가?
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2017-10-07T15:09:27+09:00">
+	
+		    Oct 07, 2017
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Tech/">Tech</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>오늘 소개할 부분은 작성 중인 책 2부의 개론에 해당하는 내용이다.<br>이 장을 통해 <code>RxJS의 개발과정의 큰 그림</code>을 다시한번 살펴보기 바란다</p>
+<hr>
+<p>1부에서는 RxJS의 본질을 알아가기 위해 RxJS가 고민했던 문제들을 살펴보았다. 2부에서부터는 RxJS 라이브러리에 대해 자세히 알아보자. 이 장을 통해서는 RxJS로 간단한 소스를 구현해보면서 RxJS의 사용법을 익혀보도록 하자.</p>
+<h2 id="RxJS"><a href="#RxJS" class="headerlink" title="RxJS"></a>RxJS</h2><p>RxJS의 공식 사이트에서는 RxJS에 대해 다음과 같이 정의하고 있다.</p>
+<blockquote>
+<p>RxJS is a library for composing asynchronous and event-based programs by using observable sequences.<br>RxJS는 Observable를 사용하여 비동기 및 이벤트 기반 프로그램을 작성하기 위한 라이브러리이다.</p>
+</blockquote>
+<p>1부에서 필자가 정의한 <code>범용적인 데이터 플로우 솔루션</code>을 지향하는 라이브러리의 국소적인 표현이라고 할수 있다. 특이한 것은 공식 홈페이지에는 RxJS에 대해 <code>이벤트용 lodash 정도라고 생각해라</code>라는 말도 있다.</p>
+<blockquote>
+<p>Think of RxJS as Lodash for events.</p>
+</blockquote>
+<p>앞의 용어가 RxJS의 철학에 대한 정의라면, 뒤의 정의는 실제 사용에 대한 정의라고 볼수 있다.<br>RxJS가 어렵다면 지금은 그냥 <code>비동기 Array/Collection 데이터</code>를 다루는 라이브러리 정도로 생각하고 접근해보자.</p>
+<a id="more"></a>
+
+<h2 id="RxJS-시작하기"><a href="#RxJS-시작하기" class="headerlink" title="RxJS 시작하기"></a>RxJS 시작하기</h2><h3 id="RxJS-첫번째-예제"><a href="#RxJS-첫번째-예제" class="headerlink" title="RxJS 첫번째 예제"></a>RxJS 첫번째 예제</h3><p>RxJS로 간단한 예제를 만들어보자.<br>웹 개발시 가장 빈번히 이루어지는 이벤트를 처리하는 예제를 작성해보자.</p>
+<p>페이지를 클릭했을 경우 event.currentTarget 정보를 콘솔로 찍어보도록 하자.</p>
+<p>다음과 같이 간단히 작성할 수 있다.<br>이벤트 핸들러를 만들고, 그 핸들러를 <code>addEventListener</code>를 통해 등록하기만 하면 우리가 원하는 코드를 작성할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> eventHandler = <span class="function"><span class="params">event</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(event.currentTarget);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="built_in">document</span>.addEventListener(<span class="string">"click"</span>, eventHandler);</span><br></pre></td></tr></table></figure>
+
+<p>이 코드와 동일한 기능을 RxJS로 작성해 보자.<br>RxJS에서는 이벤트를 Observable로 변환하는 <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#static-method-fromEvent" rel="external nofollow noopener noreferrer" target="_blank">fromEvent</a> 메소드를 제공한다.<br>Observable의 <code>subscribe</code> 메소드를 이용하면 Observer가 Observable을 구독할 수 있다.<br>즉, Observable에서 전달된 데이터를 Observer는 소비할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> click$ = Rx.Observable.fromEvent(<span class="built_in">document</span>, <span class="string">"click"</span>); <span class="comment">// observable</span></span><br><span class="line"><span class="keyword">const</span> observer = <span class="function"><span class="params">event</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(event.currentTarget);</span><br><span class="line">&#125;;</span><br><span class="line">click$.subscribe(observer);</span><br></pre></td></tr></table></figure>
+
+<p>RxJS에서는 이벤트 핸들러를 만들었던 것과 같이 Observer를 만들고,<br>addEventListener를 통해 이벤트 핸들러를 등록하는 것과 같이 observer를 Observable에 구독(subscribe)하였다.<br>다른 것이 있다면 브라우저를 통해 전달되는 이벤트 정보를 Observable로 변환하는 작업을 추가적으로 하고 있다.</p>
+<h3 id="RxJS-첫번째-예제-개선하기"><a href="#RxJS-첫번째-예제-개선하기" class="headerlink" title="RxJS 첫번째 예제 개선하기"></a>RxJS 첫번째 예제 개선하기</h3><p>앞에서 살펴본 예제를 살펴보면 실제 우리가 필요한 정보는 click이 아니라 click 될때의 currentTarget 정보이다.</p>
+<p>Observable 인스턴스의 <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#instance-method-pluck" rel="external nofollow noopener noreferrer" target="_blank">pluck</a> 메소드를 이용하면 이 의도를 코드에 더욱 명확히 나타낼 수 있다.</p>
+<blockquote>
+<p>pluck은 사전적으로 “~을 뽑다” 라는 의미이다.<br>추출할 속성들을 “문자열”로 지정할수 있다. 이 함수의 반환값은 새로운 Observable 인스턴스 이다.<br><code>public pluck(properties: ...string): Observable</code></p>
+</blockquote>
+<p>다음 코드는 pluck 메소드를 이용하여 코드의 의도를 더욱 분명하게 변경한 예이다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> currentTarget$ = Rx.Observable.fromEvent(<span class="built_in">document</span>, <span class="string">"click"</span>).pluck(</span><br><span class="line">  <span class="string">"currentTarget"</span></span><br><span class="line">); <span class="comment">// observable</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> observer = <span class="function"><span class="params">currentTarget</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(currentTarget);</span><br><span class="line">&#125;;</span><br><span class="line">currentTarget$.subscribe(observer);</span><br></pre></td></tr></table></figure>
+
+<p>click이 발생하는 시점에 전달된 event 객체의 currentTarget을 전달하는 currentTarget$을 만들 수 있다.<br>Observer는 currentTarget을 구독함으로써 currentTarget 데이터를 전달받을 수 있다.</p>
+<h3 id="RxJS-두번째-예제"><a href="#RxJS-두번째-예제" class="headerlink" title="RxJS 두번째 예제"></a>RxJS 두번째 예제</h3><p>앞의 예제가 비동기 방식을 RxJS로 구현한 것이라면 이번에는 동기적인 작업을 RxJS로 구현해보자.<br>간단한 예로 사용자 정보를 가지는 배열에서 “촉”나라 사람만 추출하여보자.</p>
+<p>다음과 같이 작성할 수 있다.<br>array의 <code>filter</code> 메소드를 통해 원하는 사용자만을 추출할 수 있다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> users = [</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"유비"</span>,</span><br><span class="line">    birthYear: <span class="number">161</span>,</span><br><span class="line">    nationality: <span class="string">"촉"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"손권"</span>,</span><br><span class="line">    birthYear: <span class="number">182</span>,</span><br><span class="line">    nationality: <span class="string">"오"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"관우"</span>,</span><br><span class="line">    birthYear: <span class="number">160</span>,</span><br><span class="line">    nationality: <span class="string">"촉"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"장비"</span>,</span><br><span class="line">    birthYear: <span class="number">168</span>,</span><br><span class="line">    nationality: <span class="string">"촉"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"조조"</span>,</span><br><span class="line">    birthYear: <span class="number">155</span>,</span><br><span class="line">    nationality: <span class="string">"위"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"손권"</span>,</span><br><span class="line">    birthYear: <span class="number">182</span>,</span><br><span class="line">    nationality: <span class="string">"오"</span></span><br><span class="line">  &#125;</span><br><span class="line">].filter(<span class="function"><span class="params">user</span> =&gt;</span> user.nationality === <span class="string">"촉"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> log = <span class="function"><span class="params">user</span> =&gt;</span> <span class="built_in">console</span>.log(user);</span><br><span class="line">users.forEach(log);</span><br></pre></td></tr></table></figure>
+
+<p>이 코드와 동일한 기능을 RxJS로 작성해 보자.<br>RxJS에서는 Array를 Observable로 변환하는 <a href="http://reactivex.io/rxjs/class/es6/Observable.js~Observable.html#static-method-from" rel="external nofollow noopener noreferrer" target="_blank">from</a> 메소드를 제공한다.</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> users$ = Rx.Observable.from([</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"유비"</span>,</span><br><span class="line">    birthYear: <span class="number">161</span>,</span><br><span class="line">    nationality: <span class="string">"촉"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"손권"</span>,</span><br><span class="line">    birthYear: <span class="number">182</span>,</span><br><span class="line">    nationality: <span class="string">"오"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"관우"</span>,</span><br><span class="line">    birthYear: <span class="number">160</span>,</span><br><span class="line">    nationality: <span class="string">"촉"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"장비"</span>,</span><br><span class="line">    birthYear: <span class="number">168</span>,</span><br><span class="line">    nationality: <span class="string">"촉"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"조조"</span>,</span><br><span class="line">    birthYear: <span class="number">155</span>,</span><br><span class="line">    nationality: <span class="string">"위"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">"손권"</span>,</span><br><span class="line">    birthYear: <span class="number">182</span>,</span><br><span class="line">    nationality: <span class="string">"오"</span></span><br><span class="line">  &#125;</span><br><span class="line">]).filter(<span class="function"><span class="params">user</span> =&gt;</span> user.nationality === <span class="string">"촉"</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> observer = <span class="function"><span class="params">user</span> =&gt;</span> <span class="built_in">console</span>.log(user);</span><br><span class="line">users$.subscribe(observer);</span><br></pre></td></tr></table></figure>
+
+<p>RxJS에서는 추출된 사용자를 콘솔에 출력하기 위해 log를 만든 것과 같이 Observer를 만들고,<br>forEach를 통해 log 함수를 호출하는 것과 같이 observer를 Observable에 구독(subscribe)하였다.<br>다른 것이 있다면 Array 객체를 Observable로 변환하는 작업을 추가적으로 하고 있다.</p>
+<p>RxJS를 이용하면 데이터 소스(이벤트, 배열)를 Observable로 만들기만 하면 <code>비동기 방식도 동기 방식도 모두 동일한 행태로 개발</code>을 할수 있다.</p>
+<h2 id="RxJS-4대-천왕"><a href="#RxJS-4대-천왕" class="headerlink" title="RxJS 4대 천왕"></a>RxJS 4대 천왕</h2><p>RxJS에서는 다루는 중요 개념은 다음과 같다.</p>
+<ul>
+<li>Observable</li>
+<li>Operator</li>
+<li>Observer</li>
+<li>Subscription</li>
+<li>Subject</li>
+<li>Scheduler</li>
+</ul>
+<p>이 장에서는 이 중 항상 사용하게 되는 4개 개념인 Observable, Operator, Observer, Subscription에 대해 다루기로 하자.<br>나머지 Subject와 Scheduler는 뒷 장에서 다루도록 하겠다.</p>
+<h3 id="Observable"><a href="#Observable" class="headerlink" title="Observable"></a>Observable</h3><p>시간을 축으로 연속적인 데이터를 저장하는 컬렉션을 표현한 객체이다. 데이터를 제공하는 소스나 Observabler과 연결되어 데이터를 제공한다. Operator와 함께 RxJS의 핵심 중의 핵심인 개념이다. 이를 stream이라고 부른다.</p>
+<img src="/blog/2017/10/07/rxjsbook4/observable_detail.png" title="observable">
+
+<h3 id="Operator"><a href="#Operator" class="headerlink" title="Operator"></a>Operator</h3><p>Observable의 static 메소드나 인스턴스의 메소드로 Observable 객체를 반환하는 메소드를 Operator라고 한다. Operator는 현재의 Observable Instance를 기반으로 항상 새로운 Observable instance를 반환한다.<br>Operator는 Observable을 생성하기도 하고, 각각의 Observable을 연결하기도 한다. 또한, Observable을 분리하거나 합치기도 한다.<br>위 예제에서는 <code>Observable.fromEvent</code> operator를 이용하여 Observable을 생성하고 Observable 인스턴스의 <code>pluck</code> operator를 이용하여 데이터를 변경하였다.</p>
+<img src="/blog/2017/10/07/rxjsbook4/operator_detail.png" title="operator">
+
+<h3 id="Observer"><a href="#Observer" class="headerlink" title="Observer"></a>Observer</h3><p>Observable에 의해 전달된 데이터를 소비하는 주체이다. Observer는 next, error, complete 함수를 가진 객체를 가리킨다. Observable에 의해 데이터가 전달될때는 next가 호출되고, 에러가 발생했을 때는 error 함수, 데이터 전달이 완료되었을 때는 complete함수가 호출되어진다.<br>Observer은 Observable과 subscribe 메소드를 통해 연결되어 진다.</p>
+<blockquote>
+<h4 id="Observable-subscribe-함수"><a href="#Observable-subscribe-함수" class="headerlink" title="Observable#subscribe 함수"></a>Observable#subscribe 함수</h4><p>subscribe는 Observer를 파라미터로 받는다.</p>
+<h5 id="1-Observer-객체를-전달하는-subscribe-사용-예"><a href="#1-Observer-객체를-전달하는-subscribe-사용-예" class="headerlink" title="1. Observer 객체를 전달하는 subscribe 사용 예"></a>1. Observer 객체를 전달하는 subscribe 사용 예</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> observer = &#123;</span><br><span class="line">   next: <span class="function"><span class="params">x</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"Observer가 Observable로부터 받은 데이터: "</span> + x),</span><br><span class="line">   error: <span class="function"><span class="params">err</span> =&gt;</span></span><br><span class="line">     <span class="built_in">console</span>.error(<span class="string">"Observer가 Observable로부터 받은 에러 데이터: "</span> + err),</span><br><span class="line">   complete: <span class="function"><span class="params">()</span> =&gt;</span></span><br><span class="line">     <span class="built_in">console</span>.log(<span class="string">"Observer가 Observable로부터 종료 되었다는 알림을 받은 경우"</span>)</span><br><span class="line">&#125;;</span><br><span class="line">click$.subscribe(observer); <span class="comment">// observer 객체를 파라미터로 받는다.</span></span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<h5 id="2-next-콜백함수를-전달하는-subscribe-사용-예"><a href="#2-next-콜백함수를-전달하는-subscribe-사용-예" class="headerlink" title="2. next 콜백함수를 전달하는 subscribe 사용 예"></a>2. next 콜백함수를 전달하는 subscribe 사용 예</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// observer의 next 함수를 파라미터로 받는다.</span></span><br><span class="line">click$.subscribe(<span class="function"><span class="params">x</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"Observer가 Observable로부터 받은 데이터: "</span> + x));</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<h5 id="3-next-error-complete-콜백함수를-전달하는-subscribe-사용-예"><a href="#3-next-error-complete-콜백함수를-전달하는-subscribe-사용-예" class="headerlink" title="3. next, error, complete 콜백함수를 전달하는 subscribe 사용 예"></a>3. next, error, complete 콜백함수를 전달하는 subscribe 사용 예</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// observer의 next, error, complete 함수를 파라미터로 받는다.</span></span><br><span class="line">  click$.subscribe(<span class="function"><span class="params">x</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"Observer가 Observable로부터 받은 데이터: "</span> + x),</span><br><span class="line">    error: <span class="function"><span class="params">err</span> =&gt;</span> <span class="built_in">console</span>.error(<span class="string">"Observer가 Observable로부터 받은 에러 데이터: "</span> + err),</span><br><span class="line">    complete: <span class="function"><span class="params">()</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">"Observer가 Observable로부터 종료 되었다는 알림을 받은 경우"</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="Subscription"><a href="#Subscription" class="headerlink" title="Subscription"></a>Subscription</h3><p>Observable.subscribe의 반환값이다. Subscription 객체는 자원의 해제를 담당한다. 등록된 Observable의 데이터를 더이상 전달 받고 싶지 않을 경우 <code>unsubscribe</code> 메소드를 호출하여 자원을 해제한다.</p>
+<img src="/blog/2017/10/07/rxjsbook4/subscription_detail.png" title="subscription">
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ...</span></span><br><span class="line"><span class="keyword">const</span> subscription = currentTarget$.subscribe(observer);</span><br><span class="line"></span><br><span class="line"><span class="comment">// subscription으로 자원 해제가 가능</span></span><br><span class="line">subscription.unsubscribe();</span><br></pre></td></tr></table></figure>
+
+<h2 id="RxJS-개발-방법"><a href="#RxJS-개발-방법" class="headerlink" title="RxJS 개발 방법"></a>RxJS 개발 방법</h2><p>위에서 제시한 예제를 rxjs의 4개 개념으로 표현하면 다음과 같다.</p>
+<img src="/blog/2017/10/07/rxjsbook4/rxjs-structure1.png" title="rxjs 4가지 개념">
+
+<p>이벤트를 Observable로 변환하고 Observable의 pluck, filter 메소드를 통해 데이터를 변경한다. 데이터를 처리할 Observer를 만들고, Observable의 subscribe 메소드를 통해 Observer를 구독한다.</p>
+<p>RxJS를 사용하여 개발할 때의 프로세스는 대부분 다음과 같은 과정을 거친다.</p>
+<ul>
+<li>첫째. 데이터 소스를 Observable로 변경한다.</li>
+<li>둘째. Observable의 operator를 통해 데이터를 변경하거나 추출한다.<br>또는 여러 개의 Observable을 하나의 Observable로 합치거나 하나의 Observable을 여러 개의 Observable로 만든다.</li>
+<li>셋째. 원하는 데이터를 받아 처리하는 Observer를 만든다.</li>
+<li>넷째. Observable의 subscribe를 통해 Observer를 등록한다.</li>
+<li>다섯째. Observable 구독을 정지하고 자원을 해지한다.</li>
+</ul>
+<h2 id="정리"><a href="#정리" class="headerlink" title="정리"></a>정리</h2><p>이번 장에서는 RxJS로 간단한 예제를 작성해 봄으로서 RxJS의 4가지 중요한 개념에 대해 살펴보았다. 더불어 RxJS개발 프로세스를 간단하게나마 살펴볼수 있었다.<br>다음 장에서는 실제로 Observable을 만드는 방법에 대해 살펴보기로 하자.</p>
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/book/">book</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/draft/">draft</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/rxjs/">rxjs</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/21/shoulduserxjs/" data-tooltip="RxJS 써야겠어요? 안써야겠어요?" aria-label="PREVIOUS: RxJS 써야겠어요? 안써야겠어요?">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/07/Microsoft/" data-tooltip="Microsoft와의 인연" aria-label="NEXT: Microsoft와의 인연">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/10/07/rxjsbook4/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/10/07/rxjsbook4/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/21/shoulduserxjs/" data-tooltip="RxJS 써야겠어요? 안써야겠어요?" aria-label="PREVIOUS: RxJS 써야겠어요? 안써야겠어요?">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2017/10/07/Microsoft/" data-tooltip="Microsoft와의 인연" aria-label="NEXT: Microsoft와의 인연">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/10/07/rxjsbook4/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/10/07/rxjsbook4/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2017/10/07/rxjsbook4/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2017/10/07/rxjsbook4/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2017/10/07/rxjsbook4/';
+                 
+                    this.page.identifier = '2017/10/07/rxjsbook4/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>

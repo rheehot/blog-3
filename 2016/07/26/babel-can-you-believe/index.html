@@ -1,0 +1,917 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        Babel 너 믿을수 있니? - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"누군가나 내 코드를 임의로 바꾼다는 것은 개발자에게는 결코 유쾌한 일이 아닙니다. 더군다나, 사람이 아닌, 기계가 자동적으로 바꾼다는 것은 더욱더 신뢰할 수 없는 일이죠.\n하지만, 요즘은 많이 바뀐 것 같습니다. 바로 React라는 인기 라이브러리(통상 React 군을 지칭해서 프레임워크라고 부르기도 합니다)가 등장하면서 부터 사람들의 인식을 많이 바꾼 것 같습니다. 이제는 JSX나 ES6을 적용하기 위해서 코드를 변경하는 것은 그리 두렵거나 우려스러운 일이 아닌거죠.\n그래도. 우리가 누군가요? 개발자입니다. 의심이 안들수가 없습니다.그래서 ES6의 코드를 Babel이 실제로 어떻게 변경하는지 확인해 봤습니다.확인한 측면은 크게, 코드량. 그리고 코드의 품질면에서 확인했습니다.\nES6 변환 코드 [Babel 6.10.4기준]\nBabel은 ES6에 가급적이면 근접하게 코드를 변환하는 Normal Mode와 가급적 간단한 ES5코드로 변경하는 Loose Mode가 있다.\n\nLoose Mode에 의해 변환된 코드는 빠르고, 하위 브라우저에 안정적인 반면, native ES6 코드로 변경시에는 변경 이슈가 발생할 수 있는 단점이 있다.\n\n다음은 2가지 모드에서 변환된 코드를 기준으로 사이즈를 비교한 표이다.비교한 사이즈는 JavaScript를 minified한 결과를 바탕으로 추출된 값.\n\nminified tool - http://www.danstools.com/javascript-minify/\n\n\n\n\n구분\n상세 스펙\nES6\nBabel Normal mode\nBabel Loose mode\n코드 비교 내역\n\n\n\n코드 변환\nclass\n81 Bytes\n846 Bytes\n316 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\nextends\n38 Bytes\n524 Bytes\n524 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\narrow function\n19 Bytes\n41 Bytes\n41 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\ndefault parameter\n28 Bytes\n92 Bytes\n92 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\nspread operator\n26 Bytes\n220 Bytes\n32 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\nlet, const\n14 Bytes\n12 Bytes\n12 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\nenhanced Object Literals\n27 Bytes\n214 Bytes\n38 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\ntemplate Strings\n64 Bytes\n68 Bytes\n68 Bytes\n변환 전후 상세 코드\n\n\n코드 변환\ndestructring\n57 Bytes\n142 Bytes\n142 Bytes\n변환 전후 상세 코드\n\n\n코드 변환 + Polyfill\ngenerators\n156 Bytes\n850 Bytes\n691 Bytes\n변환 전후 상세 코드\n\n\n코드 변환 + Polyfill\niterator\n164 Bytes\n652 Bytes\n497 Bytes\n변환 전후 상세 코드\n\n\nPolyfill\nMap/Set/WeakMap/WeakSet, Promise, Reflect, Symbol\nN/A\nN/A\nN/A\nN/A\n\n\nES6 변환 내역 분석\nNormal mode 보다는 Loose mode의 변환 코드의 양이 더 적다.\n\nLoose mode가 빠르고, 안정적이다. 다만, native ES6으로 변경시에는 변경 이슈가 존재 할수 있기 때문에 코드에 대한 검수가 꼭 필요하다.\n\nclass, extends의 경우 약간 용량이 큰 것은 사실이지만, 실제 개발자가 구현한다고 하면, Babel의 코드량이 더 작음.\n\nclass, extends 크기 비교\n\n\nBabel Normal mode (class + extends 함수 크기) : 1,000 Bytes\nBabel Loose mode (class + extends 함수 크기) : 648 Bytes\nKlass : 1,450 Bytes\njsFace : 4,349 Bytes\n\n\ngenerators, iterator 의 경우 변환되는 코드의 양이 많다.\n\nBabel polyfill의 지원 범위가 ES5~ES7+, Web standards, 등까지 넓기 때문에, Babel polyfill의 사이즈는 꽤 큰 편이다. Polyfill과 함께 사용해야하는 스펙 (generator, iterator, Map/Set/WeakMap/WeakSet, Promise, Reflect, Symbol, …)의 경우에는 Custom build를 사용하여 선별 적용한다.\n\n파일별로 스펙에 따른 함수가 추가되기 때문에, Babel External helpers을 이용하여 코드량을 줄일 수 있다.\n\n\n코드 품질에 대해이 코드가 나쁜 코드다. 좋은 코드다라는 것은 명확히 있지만, 실제 코드의 단위 조각들만을 보고 코드의 품질을 논하기는 사실상 어렵다고 생각합니다.\n하지만, 좋은 코드가 읽기 쉬운 코드, 버그가 없는 안정적인 코드, 실행 속도가 빠른 코드 라고 한다면, 저의 개인적인 사견으로 본다면, Babel의 Loose mode 코드는 좋은 코드입니다.\nBabel의 “Loose” 모드일 경우, 개인적으로 읽기 쉬운 코드였으며, 하위브라우저에서 최적의 성능을 낼수 있도록 ES5 기반하에 작성되어 있었습니다.\n\n한마디로 정리한다면… 안타깝지만, Babel 은 저 보다 코드를 더 잘짰습니다. ㅠㅠ\n상세한 내역은 코드 변환 전후의 내역을 확인하기 바랍니다.\n\nES6 도입을 검토하시는 개발자분들이 있다면, Babel에 의한 코드 변화를 의심하는 것보다, 다른 부분을 검토대상으로 고려하는 게 더 좋을 것 같네요.\n","dateCreated":"2016-07-26T12:10:25+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2016-07-26T12:10:25+09:00","description":"","headline":"Babel 너 믿을수 있니?","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/","keywords":"es6, es2015, babel, transpiler"}</script>
+    <meta name="description" content="누군가나 내 코드를 임의로 바꾼다는 것은 개발자에게는 결코 유쾌한 일이 아닙니다. 더군다나, 사람이 아닌, 기계가 자동적으로 바꾼다는 것은 더욱더 신뢰할 수 없는 일이죠. 하지만, 요즘은 많이 바뀐 것 같습니다. 바로 React라는 인기 라이브러리(통상 React 군을 지칭해서 프레임워크라고 부르기도 합니다)가 등장하면서 부터 사람들의 인식을 많이 바꾼 것">
+<meta name="keywords" content="es6,es2015,babel,transpiler">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="Babel 너 믿을수 있니?">
+<meta property="og:url" content="http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="누군가나 내 코드를 임의로 바꾼다는 것은 개발자에게는 결코 유쾌한 일이 아닙니다. 더군다나, 사람이 아닌, 기계가 자동적으로 바꾼다는 것은 더욱더 신뢰할 수 없는 일이죠. 하지만, 요즘은 많이 바뀐 것 같습니다. 바로 React라는 인기 라이브러리(통상 React 군을 지칭해서 프레임워크라고 부르기도 합니다)가 등장하면서 부터 사람들의 인식을 많이 바꾼 것">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/babel.png">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Babel 너 믿을수 있니?">
+<meta name="twitter:description" content="누군가나 내 코드를 임의로 바꾼다는 것은 개발자에게는 결코 유쾌한 일이 아닙니다. 더군다나, 사람이 아닌, 기계가 자동적으로 바꾼다는 것은 더욱더 신뢰할 수 없는 일이죠. 하지만, 요즘은 많이 바뀐 것 같습니다. 바로 React라는 인기 라이브러리(통상 React 군을 지칭해서 프레임워크라고 부르기도 합니다)가 등장하면서 부터 사람들의 인식을 많이 바꾼 것">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/babel.png">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            Babel 너 믿을수 있니?
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2016-07-26T12:10:25+09:00">
+	
+		    Jul 26, 2016
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Tech/">Tech</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>누군가나 내 코드를 임의로 바꾼다는 것은 개발자에게는 결코 유쾌한 일이 아닙니다. 더군다나, 사람이 아닌, 기계가 자동적으로 바꾼다는 것은 더욱더 신뢰할 수 없는 일이죠.</p>
+<p>하지만, 요즘은 많이 바뀐 것 같습니다. 바로 React라는 인기 라이브러리(통상 React 군을 지칭해서 프레임워크라고 부르기도 합니다)가 등장하면서 부터 사람들의 인식을 많이 바꾼 것 같습니다. 이제는 JSX나 ES6을 적용하기 위해서 코드를 변경하는 것은 그리 두렵거나 우려스러운 일이 아닌거죠.</p>
+<p>그래도. 우리가 누군가요? 개발자입니다. 의심이 안들수가 없습니다.<br>그래서 ES6의 코드를 Babel이 실제로 어떻게 변경하는지 확인해 봤습니다.<br>확인한 측면은 크게, 코드량. 그리고 코드의 품질면에서 확인했습니다.</p>
+<h3 id="ES6-변환-코드-Babel-6-10-4기준"><a href="#ES6-변환-코드-Babel-6-10-4기준" class="headerlink" title="ES6 변환 코드 [Babel 6.10.4기준]"></a>ES6 변환 코드 [Babel 6.10.4기준]</h3><img src="/blog/2016/07/26/babel-can-you-believe/babel.png">
+<p><a href="http://www.2ality.com/2015/12/babel6-loose-mode.html#two_modes" rel="external nofollow noopener noreferrer" target="_blank">Babel은 ES6에 가급적이면 근접하게 코드를 변환하는 <code>Normal Mode</code>와 가급적 간단한 ES5코드로 변경하는 <code>Loose Mode</code>가 있다.</a></p>
+<blockquote>
+<p>Loose Mode에 의해 변환된 코드는 빠르고, 하위 브라우저에 안정적인 반면, native ES6 코드로 변경시에는 변경 이슈가 발생할 수 있는 단점이 있다.</p>
+</blockquote>
+<p>다음은 2가지 모드에서 변환된 코드를 기준으로 사이즈를 비교한 표이다.<br>비교한 사이즈는 JavaScript를 minified한 결과를 바탕으로 추출된 값.</p>
+<ul>
+<li>minified tool - <a href="http://www.danstools.com/javascript-minify/" rel="external nofollow noopener noreferrer" target="_blank">http://www.danstools.com/javascript-minify/</a></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>구분</th>
+<th>상세 스펙</th>
+<th>ES6</th>
+<th>Babel Normal mode</th>
+<th>Babel Loose mode</th>
+<th>코드 비교 내역</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>코드 변환</td>
+<td>class</td>
+<td>81 Bytes</td>
+<td><code>846 Bytes</code></td>
+<td><code>316 Bytes</code></td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#1-class">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>extends</td>
+<td>38 Bytes</td>
+<td><code>524 Bytes</code></td>
+<td><code>524 Bytes</code></td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#2-extends">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>arrow function</td>
+<td>19 Bytes</td>
+<td>41 Bytes</td>
+<td>41 Bytes</td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#3-arrow-function">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>default parameter</td>
+<td>28 Bytes</td>
+<td>92 Bytes</td>
+<td>92 Bytes</td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#4-default-parameter">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>spread operator</td>
+<td>26 Bytes</td>
+<td><code>220 Bytes</code></td>
+<td><code>32 Bytes</code></td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#5-spread-operator">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>let, const</td>
+<td>14 Bytes</td>
+<td>12 Bytes</td>
+<td>12 Bytes</td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#6-let-const">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>enhanced Object Literals</td>
+<td>27 Bytes</td>
+<td><code>214 Bytes</code></td>
+<td><code>38 Bytes</code></td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#7-enhanced-object-literals">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>template Strings</td>
+<td>64 Bytes</td>
+<td>68 Bytes</td>
+<td>68 Bytes</td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#8-template-strings">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환</td>
+<td>destructring</td>
+<td>57 Bytes</td>
+<td>142 Bytes</td>
+<td>142 Bytes</td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#9-destructring">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환 + Polyfill</td>
+<td>generators</td>
+<td>156 Bytes</td>
+<td><code>850 Bytes</code></td>
+<td><code>691 Bytes</code></td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#1-generators">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>코드 변환 + Polyfill</td>
+<td>iterator</td>
+<td>164 Bytes</td>
+<td><code>652 Bytes</code></td>
+<td><code>497 Bytes</code></td>
+<td><a href="https://sculove.github.io/blog/2016/07/26/babel-codes/#2-iterator">변환 전후 상세 코드</a></td>
+</tr>
+<tr>
+<td>Polyfill</td>
+<td>Map/Set/WeakMap/WeakSet, Promise, Reflect, Symbol</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>N/A</td>
+</tr>
+</tbody></table>
+<h3 id="ES6-변환-내역-분석"><a href="#ES6-변환-내역-분석" class="headerlink" title="ES6 변환 내역 분석"></a>ES6 변환 내역 분석</h3><ul>
+<li><p>Normal mode 보다는 Loose mode의 변환 코드의 양이 더 적다.</p>
+</li>
+<li><p>Loose mode가 빠르고, 안정적이다. 다만, native ES6으로 변경시에는 변경 이슈가 존재 할수 있기 때문에 코드에 대한 검수가 꼭 필요하다.</p>
+</li>
+<li><p>class, extends의 경우 약간 용량이 큰 것은 사실이지만, 실제 개발자가 구현한다고 하면, Babel의 코드량이 더 작음.</p>
+<blockquote>
+<p>class, extends 크기 비교</p>
+</blockquote>
+<ul>
+<li>Babel Normal mode (class + extends 함수 크기) : 1,000 Bytes</li>
+<li>Babel Loose mode (class + extends 함수 크기) : 648 Bytes</li>
+<li><a href="https://github.com/ded/klass" rel="external nofollow noopener noreferrer" target="_blank">Klass</a> : 1,450 Bytes</li>
+<li><a href="https://github.com/tnhu/jsface" rel="external nofollow noopener noreferrer" target="_blank">jsFace</a> : 4,349 Bytes</li>
+</ul>
+</li>
+<li><p>generators, iterator 의 경우 변환되는 코드의 양이 많다.</p>
+</li>
+<li><p>Babel polyfill의 지원 범위가 ES5~ES7+, Web standards, 등까지 넓기 때문에, Babel polyfill의 사이즈는 꽤 큰 편이다. Polyfill과 함께 사용해야하는 스펙 (generator, iterator, Map/Set/WeakMap/WeakSet, Promise, Reflect, Symbol, …)의 경우에는 <a href="https://github.com/zloirock/core-js#custom-build-from-the-command-line" rel="external nofollow noopener noreferrer" target="_blank">Custom build</a>를 사용하여 선별 적용한다.</p>
+</li>
+<li><p>파일별로 스펙에 따른 함수가 추가되기 때문에, <a href="http://babeljs.io/docs/plugins/external-helpers/" rel="external nofollow noopener noreferrer" target="_blank">Babel External helpers</a>을 이용하여 코드량을 줄일 수 있다.</p>
+</li>
+</ul>
+<h2 id="코드-품질에-대해"><a href="#코드-품질에-대해" class="headerlink" title="코드 품질에 대해"></a>코드 품질에 대해</h2><p>이 코드가 나쁜 코드다. 좋은 코드다라는 것은 명확히 있지만, 실제 코드의 단위 조각들만을 보고 코드의 품질을 논하기는 사실상 어렵다고 생각합니다.</p>
+<p>하지만, 좋은 코드가 <code>읽기 쉬운 코드</code>, <code>버그가 없는 안정적인 코드</code>, <code>실행 속도가 빠른 코드</code> 라고 한다면, 저의 개인적인 사견으로 본다면, Babel의 Loose mode 코드는 좋은 코드입니다.</p>
+<p>Babel의 “Loose” 모드일 경우, 개인적으로 읽기 쉬운 코드였으며, 하위브라우저에서 최적의 성능을 낼수 있도록 ES5 기반하에 작성되어 있었습니다.</p>
+<blockquote>
+<h4 id="한마디로-정리한다면…-안타깝지만-Babel-은-저-보다-코드를-더-잘짰습니다-ㅠㅠ"><a href="#한마디로-정리한다면…-안타깝지만-Babel-은-저-보다-코드를-더-잘짰습니다-ㅠㅠ" class="headerlink" title="한마디로 정리한다면… 안타깝지만, Babel 은 저 보다 코드를 더 잘짰습니다. ㅠㅠ"></a>한마디로 정리한다면… 안타깝지만, Babel 은 저 보다 코드를 더 잘짰습니다. ㅠㅠ</h4></blockquote>
+<p>상세한 내역은 <a href="https://sculove.github.io/blog/2016/07/26/babel-codes/">코드 변환 전후</a>의 내역을 확인하기 바랍니다.</p>
+<blockquote>
+<h3 id="ES6-도입을-검토하시는-개발자분들이-있다면-Babel에-의한-코드-변화를-의심하는-것보다-다른-부분을-검토대상으로-고려하는-게-더-좋을-것-같네요"><a href="#ES6-도입을-검토하시는-개발자분들이-있다면-Babel에-의한-코드-변화를-의심하는-것보다-다른-부분을-검토대상으로-고려하는-게-더-좋을-것-같네요" class="headerlink" title="ES6 도입을 검토하시는 개발자분들이 있다면, Babel에 의한 코드 변화를 의심하는 것보다, 다른 부분을 검토대상으로 고려하는 게 더 좋을 것 같네요."></a>ES6 도입을 검토하시는 개발자분들이 있다면, Babel에 의한 코드 변화를 의심하는 것보다, 다른 부분을 검토대상으로 고려하는 게 더 좋을 것 같네요.</h3></blockquote>
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/babel/">babel</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/es2015/">es2015</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/es6/">es6</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/transpiler/">transpiler</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2016/08/05/angular-cli/" data-tooltip="Angular2가 기대되는 이유. Angular-Cli" aria-label="PREVIOUS: Angular2가 기대되는 이유. Angular-Cli">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2016/07/26/babel-codes/" data-tooltip="Babel 변환코드" aria-label="NEXT: Babel 변환코드">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2016/08/05/angular-cli/" data-tooltip="Angular2가 기대되는 이유. Angular-Cli" aria-label="PREVIOUS: Angular2가 기대되는 이유. Angular-Cli">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2016/07/26/babel-codes/" data-tooltip="Babel 변환코드" aria-label="NEXT: Babel 변환코드">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2016/07/26/babel-can-you-believe/';
+                 
+                    this.page.identifier = '2016/07/26/babel-can-you-believe/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>

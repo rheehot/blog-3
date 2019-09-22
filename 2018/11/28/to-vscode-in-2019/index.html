@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+<html lang="en">
+    
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="아내와 아들 그리고 딸밖에 모르는 남편">
+    <title>
+        2019년 자바스크립트 개발은 VSCODE로 - 아내와 아들 그리고 딸밖에 모르는 남편
+    </title>
+    <meta name="author" content="sculove">
+    
+    <meta name="keywords" content="frontend,javascript,developer,">
+    
+    
+    
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="/blog/rss2.xml">
+    
+    <link rel="canonical" href="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/">
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg"},"articleBody":"저만 알고 오래오래 쓰고 싶었는데요.제 개발툴 경험 및 노하우를 적어 봅니다. ㅋ (참고로 전 JavaScript 개발자입니다)\nSublimeText…WebStorm을 거쳐저는 JavaScript 개발자라면 다 써본다는 SublimeText를 선호하는 개발자였습니다.SublimeText가 가볍기도 하거니와 다양한 플러그인이 있어서 열심히 찾고 다니기만 한다면 자기가 원하는 환경을 만들수 있습니다. 하지만 SublimeText가 생각보다 설정해야 할 것이 많이 있습니다.더불어 컴퓨터 바뀔 때마다 플러그인을 매번 설치하는 것도 까다로웠죠. 더군다나 플러그인 자체가 ruby로 되어 있어서 답답한 면이 있었습니다.\n이런 불편함 쯤이야…잘~ 견대내었는데요.\n이거 바꿔야겠다고 생각한게 좀 큰 파일 (번들링된 파일을 열어서 수정하는 경우, 파일이 많은 프로젝트를 열어서 수정하는 경우…)… 버버버벅 됩니다.특히 다양한 플로그인을 설치해놓은 상태에서는 상태가 더 심각합니다.\n그래서 선택 한게 SublimeText보다 더 비싼 WebStorm입니다. (역시 돈이 최고얏!)오~ 이거 메모리만 빠방한다면 쓸만합니다. 좋아요~하지만… 정말 메모리를 엄청 늘려야해요. 기본적으로 JVM 에서 돌아가기 때문에 heap만 몇기가를 잡아야해요.파일이 좀 많은 프로젝트를 열어서 엔터만 치면 차한잔 마시고 와야할 정도 였죠.전 아직도 6년 전 구시대 iMac을 쓰고 있기에 이런 단점을 몸소 체험했었습니다.\nVSCODE\n\n그래서 제가 선택한게 바로 VSCODE 입니다.무료 오픈소스인데 이게 생각보다 엄청납니다.MS의 자랑 중 하나였던 Visual Studio의 명성을 그대로 이어 받은 정말 잘 만든 에디터입니다.\n1. 모두가 선택한 IDEJavaScript 계열에서의 IDE도 춘추 전국시대가 있었습니다.제가 SublimeText를 써 왔던 것처럼 많은 이들이 다양한 에디터를 써왔습니다.어떤 이는 SublimeText를 쓰고, 어떤 이는 Atom을 쓰기도 했죠. 몇몇 장인들은 에디터 플러스를 쓰기도 했습니다.서로 자기가 최강의 에디터라고 군림하던때였습니다. 이런 춘추전국시대를 통일한 IDE가 바로 WebStorm이었죠.WebStrom은 정말 좋은 툴이지만. 몇가진 단점이 있었습니다.\n\n첫째. 비싸요\n둘째. JVM 환경하에 동작하기 때문에 느렸죠 ㅠㅠ이런 단점들을 커버하고 등장한게 바로 VSCODE입니다.\n\nVSCODE가 유료툴 보다 좋다? 사실 분명하게 말하기는 어렵습니다. 하지만. 많은 사람들이 VSCODE를 선택하고 있다는 것은 명백한 사실입니다.대표적으로 Stackoverflow에서 공개한 JavaScript TextEditor 자료를 보면 VSCODE의 위엄을 확인 할수 있습니다.stackoverflow 자료에서는 2017년 두각을 나타내기 시작해서 2018년에는 거의 압도적으로 많은 사람들이 사용하는 IDE툴이 되었습니다. 캬~\n\n2017년 Text Editors\n\n2018년 Text Editors\n2. VSCODE가 정말 빠릅니다.초기 에디터 띄우는 데 시간이 약간 걸리지만, 그 이후 부터는 완전 쾌적해요.WebStrom이나 IntelliJ와 같이 Java JVM 에서 동작하지 않고 V8기반의 Electron에서 동작하기 때문에 정말 가볍고 빠릅니다.이게 최고의 장점입니다.\n3. 개발자에게 꼭 필요한 다양한 플로그인SublimeText 처럼 인터넷을 살펴보시면 VSCODE의 추천 플러그인들은 차고 넘쳐납니다.언어에 국한되지 않고 차고 넘쳐나요. 더군다나 플러그인 자체가 js이기에 간단한 플러그인도 필요에 따라 직접 만들수 있습니다.(저도 간단히 Translator라는 플러그인이라는 것을 만들어봤었습니다. 하하하)\n정말 좋은 플러그인이 많은데요.그 중에 좀 특이하지만 유용한것 몇가지만 소개해 드릴께요.\nGithubPull Requests이 플러그인은 VSCODE 내에서 코드리뷰를 쉽게 할 수 있게 도와줘요. 리뷰 할때 해당 브랜치 내용을 확인하기 위해서 checkout 받는 경우가 종종 있죠?checkout 받아서 커밋별, 파일별 파일 변경사항을 볼수 있고 리뷰 커멘트를 바로 적을수 있습니다.\n\n코드 리뷰가 훨씬 편해요.\nSettings Sync전 구형 iMac으로 개발하고 최신 MacBook Pro로 개발을합니다.동일한 개발환경을 항상 유지하고 싶은 경우가 많은데요.이때 마다 환경 맞추는 작업을 했었습니다. 쓰던 플러그인도 다시 깔고, 필요없다고 생각했던 플러그인도 지우고, 환경 설정도 매번 맞추는 작업을 했습니다. ㅠㅠ하지만, VS Code의 Settings Sync를 이용하면 명령어 하나로 환경을 동기화할 수 있습니다.이거 완전 편합니다.집에서도 회사처럼 열심히 일할수 있어요 ㅡㅡ;;\nVS Live Share라이브 코딩이 됩니다. 페어프로그래밍할때 유용하게 할수 있겠죠?저희 팀은 아직 이 단계까지는 프로세스로 못잡아서 시험만 해봤습니다. 구글독스의 동시편집같이 되요. 로컬이다보니 버벅임도 없이 정말 잘됩니다.커서에 사용자 아이디가 보입니다. 요런식으로 ㅋ\n자세한 것은 여기 링크를 봐보세요.https://code.visualstudio.com/blogs/2017/11/15/live-share\nFrontEnd 개발자라면…저는 VSCODE를 사용하면 개발 생산성을 높이는데 많은 도움이 되었습니다.저와 마찬가지로 몇몇 개발자는 이미 WebStorm에서 VSCODE로 옮겼던 경험들을 공유하기도 했습니다.\n\nhttps://medium.com/@jawache/from-webstorm-to-vs-code-bd01ccc92aaf\nhttps://blog.buddyweb.fr/my-way-from-webstorm-to-vs-code-and-other-things-in-a-developers-life-fe71f0d07c59\nhttps://medium.com/linagora-engineering/from-webstorm-to-VSCODE-road-to-the-freedom-743eda17164a\nhttps://rationaldev.com/webstorm-vs-visual-studio-code/\n\n만약 JavaScript/TypeScript/HTML/CSS/node.js 등을 다루는 개발자라면 VSCODE로 IDE를 바꿔보시는 것도 좋은 선택이 될것 같습니다.마지막으로 제가 쓰고 있는 VSCODE 플러그인을 공개합니다. 짜잔~!\n\n","dateCreated":"2018-11-28T10:23:11+09:00","dateModified":"2019-09-22T11:02:02+09:00","datePublished":"2018-11-28T10:23:11+09:00","description":"저만 알고 오래오래 쓰고 싶었는데요.제 개발툴 경험 및 노하우를 적어 봅니다. ㅋ (참고로 전 JavaScript 개발자입니다)\nSublimeText…WebStorm을 거쳐저는 JavaScript 개발자라면 다 써본다는 SublimeText를 선호하는 개발자였습니다.SublimeText가 가볍기도 하거니와 다양한 플러그인이 있어서 열심히 찾고 다니기만 한다면 자기가 원하는 환경을 만들수 있습니다. 하지만 SublimeText가 생각보다 설정해야 할 것이 많이 있습니다.더불어 컴퓨터 바뀔 때마다 플러그인을 매번 설치하는 것도 까다로웠죠. 더군다나 플러그인 자체가 ruby로 되어 있어서 답답한 면이 있었습니다.\n이런 불편함 쯤이야…잘~ 견대내었는데요.\n이거 바꿔야겠다고 생각한게 좀 큰 파일 (번들링된 파일을 열어서 수정하는 경우, 파일이 많은 프로젝트를 열어서 수정하는 경우…)… 버버버벅 됩니다.특히 다양한 플로그인을 설치해놓은 상태에서는 상태가 더 심각합니다.\n그래서 선택 한게 SublimeText보다 더 비싼 WebStorm입니다. (역시 돈이 최고얏!)오~ 이거 메모리만 빠방한다면 쓸만합니다. 좋아요~하지만… 정말 메모리를 엄청 늘려야해요. 기본적으로 JVM 에서 돌아가기 때문에 heap만 몇기가를 잡아야해요.파일이 좀 많은 프로젝트를 열어서 엔터만 치면 차한잔 마시고 와야할 정도 였죠.전 아직도 6년 전 구시대 iMac을 쓰고 있기에 이런 단점을 몸소 체험했었습니다.\nVSCODE","headline":"2019년 자바스크립트 개발은 VSCODE로","image":[],"mainEntityOfPage":{"@type":"WebPage","@id":"http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/"},"publisher":{"@type":"Organization","name":"sculove","sameAs":["https://github.com/sculove","https://www.facebook.com/chanuk.son","https://kr.linkedin.com/in/chan-uk-son-8989ba56","mailto:sculove@gmail.com"],"image":"sculove.jpeg","logo":{"@type":"ImageObject","url":"sculove.jpeg"}},"url":"http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/","keywords":"VSCODE, ide"}</script>
+    <meta name="description" content="저만 알고 오래오래 쓰고 싶었는데요.제 개발툴 경험 및 노하우를 적어 봅니다. ㅋ (참고로 전 JavaScript 개발자입니다) SublimeText…WebStorm을 거쳐저는 JavaScript 개발자라면 다 써본다는 SublimeText를 선호하는 개발자였습니다.SublimeText가 가볍기도 하거니와 다양한 플러그인이 있어서 열심히 찾고 다니기만 한다">
+<meta name="keywords" content="VSCODE,ide">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="2019년 자바스크립트 개발은 VSCODE로">
+<meta property="og:url" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/index.html">
+<meta property="og:site_name" content="아내와 아들 그리고 딸밖에 모르는 남편">
+<meta property="og:description" content="저만 알고 오래오래 쓰고 싶었는데요.제 개발툴 경험 및 노하우를 적어 봅니다. ㅋ (참고로 전 JavaScript 개발자입니다) SublimeText…WebStorm을 거쳐저는 JavaScript 개발자라면 다 써본다는 SublimeText를 선호하는 개발자였습니다.SublimeText가 가볍기도 하거니와 다양한 플러그인이 있어서 열심히 찾고 다니기만 한다">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/2017-texteditor.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/2018-texteditor.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/pr-by-commit.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/demo.gif">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/vscode-live.png">
+<meta property="og:image" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/mylist.png">
+<meta property="og:updated_time" content="2019-09-22T02:02:02.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2019년 자바스크립트 개발은 VSCODE로">
+<meta name="twitter:description" content="저만 알고 오래오래 쓰고 싶었는데요.제 개발툴 경험 및 노하우를 적어 봅니다. ㅋ (참고로 전 JavaScript 개발자입니다) SublimeText…WebStorm을 거쳐저는 JavaScript 개발자라면 다 써본다는 SublimeText를 선호하는 개발자였습니다.SublimeText가 가볍기도 하거니와 다양한 플러그인이 있어서 열심히 찾고 다니기만 한다">
+<meta name="twitter:image" content="http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/2017-texteditor.png">
+    
+    
+    
+    
+    
+    <meta property="og:image" content="http://sculove.github.io/blog/assets/images/sculove.jpeg">
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/blog/assets/css/all.css">
+    <link rel="stylesheet" href="/blog/assets/css/jquery.fancybox.css">
+    <link rel="stylesheet" href="/blog/assets/css/thumbs.css">
+    <link rel="stylesheet" href="/blog/assets/css/tranquilpeak.css">
+    <!--STYLES END-->
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-37362821-12"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-37362821-12');
+    </script>
+
+
+    
+</head>
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/blog/ ">아내와 아들 그리고 딸밖에 모르는 남편</a>
+    </div>
+    
+        
+            <a class="header-right-icon open-algolia-search" href="#search">
+        
+        
+            <i class="fa fa-search fa-lg"></i>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/blog/#about">
+                    <img class="sidebar-profile-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+                </a>
+                <h4 class="sidebar-profile-name">sculove</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/ " title="Home">
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Home</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-categories" title="Categories">
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Categories</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-tags" title="Tags">
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Tags</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="/blog/all-archives" title="Archives">
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Archives</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link open-algolia-search" href="#search" title="Search">
+                    
+                        <i class="sidebar-button-icon fa fa-search" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Search</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="#about" title="About">
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">About</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://github.com/sculove" target="_blank" rel="external nofollow noopener noreferrer" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://www.facebook.com/chanuk.son" target="_blank" rel="external nofollow noopener noreferrer" title="Facebook">
+                    
+                        <i class="sidebar-button-icon fab fa-facebook" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Facebook</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://kr.linkedin.com/in/chan-uk-son-8989ba56" target="_blank" rel="external nofollow noopener noreferrer" title="LinkedIn">
+                    
+                        <i class="sidebar-button-icon fab fa-linkedin" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">LinkedIn</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="mailto:sculove@gmail.com" target="_blank" rel="external nofollow noopener noreferrer" title="Mail">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">Mail</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a class="sidebar-button-link " href="https://sculove.github.io/blog/rss2.xml" target="_blank" rel="noopener" title="RSS">
+                    
+                        <i class="sidebar-button-icon fa fa-rss" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">RSS</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4" class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post">
+    
+    
+    <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title">
+            2019년 자바스크립트 개발은 VSCODE로
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2018-11-28T10:23:11+09:00">
+	
+		    Nov 28, 2018
+    	
+    </time>
+    
+        <span>in </span>
+        
+    <a class="category-link" href="/blog/categories/Tech/">Tech</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <p>저만 알고 오래오래 쓰고 싶었는데요.<br>제 개발툴 경험 및 노하우를 적어 봅니다. ㅋ (참고로 전 JavaScript 개발자입니다)</p>
+<h3 id="SublimeText…WebStorm을-거쳐"><a href="#SublimeText…WebStorm을-거쳐" class="headerlink" title="SublimeText…WebStorm을 거쳐"></a>SublimeText…WebStorm을 거쳐</h3><p>저는 JavaScript 개발자라면 다 써본다는 SublimeText를 선호하는 개발자였습니다.<br>SublimeText가 가볍기도 하거니와 다양한 플러그인이 있어서 열심히 찾고 다니기만 한다면 자기가 원하는 환경을 만들수 있습니다. 하지만 SublimeText가 생각보다 설정해야 할 것이 많이 있습니다.<br>더불어 컴퓨터 바뀔 때마다 플러그인을 매번 설치하는 것도 까다로웠죠. 더군다나 플러그인 자체가 ruby로 되어 있어서 답답한 면이 있었습니다.</p>
+<p>이런 불편함 쯤이야…<br>잘~ 견대내었는데요.</p>
+<p>이거 바꿔야겠다고 생각한게 <strong>좀 큰 파일 (번들링된 파일을 열어서 수정하는 경우, 파일이 많은 프로젝트를 열어서 수정하는 경우…)… 버버버벅 됩니다.</strong><br>특히 다양한 플로그인을 설치해놓은 상태에서는 상태가 더 심각합니다.</p>
+<p>그래서 선택 한게 SublimeText보다 더 비싼 WebStorm입니다. (역시 돈이 최고얏!)<br><strong>오~ 이거 메모리만 빠방한다면 쓸만합니다. 좋아요~</strong><br>하지만… <strong>정말 메모리를 엄청 늘려야해요. 기본적으로 JVM 에서 돌아가기 때문에 heap만 몇기가를 잡아야해요.</strong><br>파일이 좀 많은 프로젝트를 열어서 엔터만 치면 차한잔 마시고 와야할 정도 였죠.<br>전 아직도 6년 전 구시대 iMac을 쓰고 있기에 이런 단점을 몸소 체험했었습니다.</p>
+<h3 id="VSCODE"><a href="#VSCODE" class="headerlink" title="VSCODE"></a>VSCODE</h3><a id="more"></a>
+
+<p>그래서 제가 선택한게 바로 <a href="https://code.visualstudio.com/" rel="external nofollow noopener noreferrer" target="_blank">VSCODE</a> 입니다.<br>무료 오픈소스인데 이게 생각보다 엄청납니다.<br>MS의 자랑 중 하나였던 Visual Studio의 명성을 그대로 이어 받은 정말 잘 만든 에디터입니다.</p>
+<h4 id="1-모두가-선택한-IDE"><a href="#1-모두가-선택한-IDE" class="headerlink" title="1. 모두가 선택한 IDE"></a>1. 모두가 선택한 IDE</h4><p>JavaScript 계열에서의 IDE도 춘추 전국시대가 있었습니다.<br>제가 SublimeText를 써 왔던 것처럼 많은 이들이 다양한 에디터를 써왔습니다.<br>어떤 이는 SublimeText를 쓰고, 어떤 이는 Atom을 쓰기도 했죠. 몇몇 장인들은 에디터 플러스를 쓰기도 했습니다.<br>서로 자기가 최강의 에디터라고 군림하던때였습니다. 이런 춘추전국시대를 통일한 IDE가 바로 WebStorm이었죠.<br>WebStrom은 정말 좋은 툴이지만. 몇가진 단점이 있었습니다.</p>
+<ul>
+<li>첫째. 비싸요</li>
+<li>둘째. JVM 환경하에 동작하기 때문에 느렸죠 ㅠㅠ<br>이런 단점들을 커버하고 등장한게 바로 VSCODE입니다.</li>
+</ul>
+<p>VSCODE가 유료툴 보다 좋다? 사실 분명하게 말하기는 어렵습니다. 하지만. 많은 사람들이 VSCODE를 선택하고 있다는 것은 명백한 사실입니다.<br>대표적으로 Stackoverflow에서 공개한 JavaScript TextEditor 자료를 보면 VSCODE의 위엄을 확인 할수 있습니다.<br>stackoverflow 자료에서는 2017년 두각을 나타내기 시작해서 2018년에는 거의 압도적으로 많은 사람들이 사용하는 IDE툴이 되었습니다. 캬~</p>
+<img src="/blog/2018/11/28/to-vscode-in-2019/2017-texteditor.png">
+<p><a href="https://2017.stateofjs.com/2017/other-tools/" rel="external nofollow noopener noreferrer" target="_blank">2017년 Text Editors</a></p>
+<img src="/blog/2018/11/28/to-vscode-in-2019/2018-texteditor.png">
+<p><a href="https://2018.stateofjs.com/other-tools/" rel="external nofollow noopener noreferrer" target="_blank">2018년 Text Editors</a></p>
+<h4 id="2-VSCODE가-정말-빠릅니다"><a href="#2-VSCODE가-정말-빠릅니다" class="headerlink" title="2. VSCODE가 정말 빠릅니다."></a>2. VSCODE가 정말 빠릅니다.</h4><p>초기 에디터 띄우는 데 시간이 약간 걸리지만, 그 이후 부터는 완전 쾌적해요.<br>WebStrom이나 IntelliJ와 같이 Java JVM 에서 동작하지 않고 V8기반의 Electron에서 동작하기 때문에 정말 가볍고 빠릅니다.<br>이게 최고의 장점입니다.</p>
+<h4 id="3-개발자에게-꼭-필요한-다양한-플로그인"><a href="#3-개발자에게-꼭-필요한-다양한-플로그인" class="headerlink" title="3. 개발자에게 꼭 필요한 다양한 플로그인"></a>3. 개발자에게 꼭 필요한 다양한 플로그인</h4><p>SublimeText 처럼 인터넷을 살펴보시면 VSCODE의 추천 플러그인들은 차고 넘쳐납니다.<br>언어에 국한되지 않고 차고 넘쳐나요. 더군다나 플러그인 자체가 js이기에 간단한 플러그인도 필요에 따라 직접 만들수 있습니다.<br>(저도 간단히 <a href="http://sculove.github.io/blog/2017/12/27/createvsextension/">Translator라는 플러그인</a>이라는 것을 만들어봤었습니다. 하하하)</p>
+<p>정말 좋은 플러그인이 많은데요.<br>그 중에 좀 특이하지만 유용한것 몇가지만 소개해 드릴께요.</p>
+<h5 id="GithubPull-Requests"><a href="#GithubPull-Requests" class="headerlink" title="GithubPull Requests"></a><a href="https://marketplace.visualstudio.com/items?itemName=GitHub.VSCODE-pull-request-github" rel="external nofollow noopener noreferrer" target="_blank">GithubPull Requests</a></h5><p>이 플러그인은 VSCODE 내에서 코드리뷰를 쉽게 할 수 있게 도와줘요. 리뷰 할때 해당 브랜치 내용을 확인하기 위해서 checkout 받는 경우가 종종 있죠?<br>checkout 받아서 커밋별, 파일별 파일 변경사항을 볼수 있고 리뷰 커멘트를 바로 적을수 있습니다.</p>
+<img src="/blog/2018/11/28/to-vscode-in-2019/pr-by-commit.png">
+<p>코드 리뷰가 훨씬 편해요.<br><a href="https://github.com/Microsoft/VSCODE-pull-request-github/blob/master/.readme/demo.gif?raw=true" rel="external nofollow noopener noreferrer" target="_blank"><img src="/blog/2018/11/28/to-vscode-in-2019/demo.gif"></a></p>
+<h5 id="Settings-Sync"><a href="#Settings-Sync" class="headerlink" title="Settings Sync"></a><a href="https://marketplace.visualstudio.com/items?itemName=Shan.code-settings-sync" rel="external nofollow noopener noreferrer" target="_blank">Settings Sync</a></h5><p>전 구형 iMac으로 개발하고 최신 MacBook Pro로 개발을합니다.<br>동일한 개발환경을 항상 유지하고 싶은 경우가 많은데요.<br>이때 마다 환경 맞추는 작업을 했었습니다. 쓰던 플러그인도 다시 깔고, 필요없다고 생각했던 플러그인도 지우고, 환경 설정도 매번 맞추는 작업을 했습니다. ㅠㅠ<br>하지만, VS Code의 Settings Sync를 이용하면 명령어 하나로 환경을 동기화할 수 있습니다.<br>이거 완전 편합니다.<br>집에서도 회사처럼 열심히 일할수 있어요 ㅡㅡ;;</p>
+<h4 id="VS-Live-Share"><a href="#VS-Live-Share" class="headerlink" title="VS Live Share"></a><a href="https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare" rel="external nofollow noopener noreferrer" target="_blank">VS Live Share</a></h4><p>라이브 코딩이 됩니다. 페어프로그래밍할때 유용하게 할수 있겠죠?<br>저희 팀은 아직 이 단계까지는 프로세스로 못잡아서 시험만 해봤습니다. 구글독스의 동시편집같이 되요. 로컬이다보니 버벅임도 없이 정말 잘됩니다.<br>커서에 사용자 아이디가 보입니다. 요런식으로 ㅋ<br><a href="https://code.visualstudio.com/assets/blogs/2017/11/15/vs-code-ls-session2.png" rel="external nofollow noopener noreferrer" target="_blank"><img src="/blog/2018/11/28/to-vscode-in-2019/vscode-live.png"></a></p>
+<p>자세한 것은 여기 링크를 봐보세요.<br><a href="https://code.visualstudio.com/blogs/2017/11/15/live-share" rel="external nofollow noopener noreferrer" target="_blank">https://code.visualstudio.com/blogs/2017/11/15/live-share</a></p>
+<h3 id="FrontEnd-개발자라면…"><a href="#FrontEnd-개발자라면…" class="headerlink" title="FrontEnd 개발자라면…"></a>FrontEnd 개발자라면…</h3><p>저는 VSCODE를 사용하면 개발 생산성을 높이는데 많은 도움이 되었습니다.<br>저와 마찬가지로 몇몇 개발자는 이미 WebStorm에서 VSCODE로 옮겼던 경험들을 공유하기도 했습니다.</p>
+<ul>
+<li><a href="https://medium.com/@jawache/from-webstorm-to-vs-code-bd01ccc92aaf" rel="external nofollow noopener noreferrer" target="_blank">https://medium.com/@jawache/from-webstorm-to-vs-code-bd01ccc92aaf</a></li>
+<li><a href="https://blog.buddyweb.fr/my-way-from-webstorm-to-vs-code-and-other-things-in-a-developers-life-fe71f0d07c59" rel="external nofollow noopener noreferrer" target="_blank">https://blog.buddyweb.fr/my-way-from-webstorm-to-vs-code-and-other-things-in-a-developers-life-fe71f0d07c59</a></li>
+<li><a href="https://medium.com/linagora-engineering/from-webstorm-to-VSCODE-road-to-the-freedom-743eda17164a" rel="external nofollow noopener noreferrer" target="_blank">https://medium.com/linagora-engineering/from-webstorm-to-VSCODE-road-to-the-freedom-743eda17164a</a></li>
+<li><a href="https://rationaldev.com/webstorm-vs-visual-studio-code/" rel="external nofollow noopener noreferrer" target="_blank">https://rationaldev.com/webstorm-vs-visual-studio-code/</a></li>
+</ul>
+<p>만약 JavaScript/TypeScript/HTML/CSS/node.js 등을 다루는 개발자라면 VSCODE로 IDE를 바꿔보시는 것도 좋은 선택이 될것 같습니다.<br>마지막으로 제가 쓰고 있는 VSCODE 플러그인을 공개합니다. 짜잔~!</p>
+<img src="/blog/2018/11/28/to-vscode-in-2019/mylist.png">
+
+            
+
+        </div>
+    </div>
+    <div align="center" style="margin: 30px">
+        <a class="bmc-button" style="
+        border-radius: 3px;
+        text-decoration: none;
+        border: 1px solid transparent;
+        padding: 9px;
+        color: #000000;
+        box-shadow: 0px 1px 2px rgba(190, 190, 190, 0.5);
+        background-color: #FFDD00;" target="_blank" href="https://www.buymeacoffee.com/Tob0c39" rel="external nofollow noopener noreferrer">
+            <span style="font-size: 15px;
+    padding-left: 28px;
+    font-weight: bold;
+    background-image: url(https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg);
+    background-repeat: no-repeat;
+    background-position: 0px;">Buy me a coffee</span>
+        </a>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+        <div class="post-footer-tags">
+            <span class="text-color-light text-small">TAGGED IN</span><br>
+            
+    <a class="tag tag--primary tag--small t-link" href="/blog/tags/VSCODE/">VSCODE</a> <a class="tag tag--primary tag--small t-link" href="/blog/tags/ide/">ide</a>
+
+        </div>
+        
+        
+        <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/12/31/learn2018/" data-tooltip="개발자를 어떻게 학습시키는게 효과적일까?. 자기반성 모드" aria-label="PREVIOUS: 개발자를 어떻게 학습시키는게 효과적일까?. 자기반성 모드">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/07/07/know-before-you-write-book/" data-tooltip="책을 쓰기전에 내가 이미 알았더라면 좋았을 툴" aria-label="NEXT: 책을 쓰기전에 내가 이미 알았더라면 좋았을 툴">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+        
+        <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+        
+        
+    </div>
+</article>
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2019 sculove. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/12/31/learn2018/" data-tooltip="개발자를 어떻게 학습시키는게 효과적일까?. 자기반성 모드" aria-label="PREVIOUS: 개발자를 어떻게 학습시키는게 효과적일까?. 자기반성 모드">
+                
+                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">PREVIOUS</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/blog/2018/07/07/know-before-you-write-book/" data-tooltip="책을 쓰기전에 내가 이미 알았더라면 좋았을 툴" aria-label="NEXT: 책을 쓰기전에 내가 이미 알았더라면 좋았을 툴">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">NEXT</span>
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions" href="#btn-open-shareoptions" aria-label="Share this post">
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/" title="Share on Facebook" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a class="post-action-btn btn btn--default" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/" title="Share on Twitter" rel="external nofollow noopener noreferrer">
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+            
+                <li class="post-action">
+                    <a class="post-action-btn btn btn--default" href="#disqus_thread">
+                        <i class="fa fa-comment"></i>
+                    </a>
+                </li>
+            
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Back to top">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>Share on Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a class="share-option-btn" target="_blank" href="https://twitter.com/intent/tweet?text=http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/" rel="external nofollow noopener noreferrer">
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>Share on Twitter</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/blog/assets/images/sculove.jpeg" alt="Author&#39;s picture">
+        
+            <h4 id="about-card-name">sculove</h4>
+        
+            <div id="about-card-bio"><p>아내와 아들 그리고 딸밖에 모르는 남편</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br>
+                <p>FrontEnd Developer</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br>
+                대한민국/서울
+            </div>
+        
+    </div>
+</div>
+
+        
+            <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-times"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="external nofollow noopener noreferrer" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search" class="form-control input--large search-input" placeholder="Search ">
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">no post found</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2011/05/14/building-rich/">
+                            <h3 class="media-heading">빌딩부자들</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    May 14, 2011
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/19/donot-speak-book/">
+                            <h3 class="media-heading">뱀의 뇌에게 말을 걸지마라</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 19, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/02/29/manager-book/">
+                            <h3 class="media-heading">만약 고교야구 여자 매니저가 피터드러커를 읽는다면</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Feb 29, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2012/03/18/myjob-myhappy/">
+                            <h3 class="media-heading">내가 하는 일 가슴 설레는 일</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Mar 18, 2012
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/11/06/mobile-es5-compatiable/">
+                            <h3 class="media-heading">모바일 브라우저 ECMAScript5 지원 현황</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 6, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2013/12/05/animation-for-performance/">
+                            <h3 class="media-heading">애니메이션 성능을 높이는 방법</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Dec 5, 2013
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2014/11/19/How-to-make-a-smooth-animation/">
+                            <h3 class="media-heading">How to Make a Smooth Animation</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Nov 19, 2014
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/01/16/angular1-for-performance/">
+                            <h3 class="media-heading">AngularJS 성능 이슈에 대한 이야기</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Jan 16, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Ftp-settings-in-OSX/">
+                            <h3 class="media-heading">Anonymous FTP Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="http://sculove.github.io/blog/2015/09/03/Apache2-settings-in-OSX/">
+                            <h3 class="media-heading">Apache2 Settings in OSX</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    Sep 3, 2015
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium" data-message-zero="no post found" data-message-one="1 post found" data-message-other="{n} posts found">
+                67 posts found
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/blog/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/blog/assets/js/jquery.js"></script>
+<script src="/blog/assets/js/jquery.fancybox.js"></script>
+<script src="/blog/assets/js/thumbs.js"></script>
+<script src="/blog/assets/js/tranquilpeak.js"></script>
+<!--SCRIPTS END-->
+
+    
+        <script>
+             var disqus_config = function () {
+                 this.page.url = 'http://sculove.github.io/blog/2018/11/28/to-vscode-in-2019/';
+                 
+                    this.page.identifier = '2018/11/28/to-vscode-in-2019/';
+                 
+             };
+            (function() {
+                var d = document, s = d.createElement('script');
+                var disqus_shortname = 'sculove';
+                s.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+
+                s.setAttribute('data-timestamp', +new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+        </script>
+    
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment-with-locales.min.js"></script>
+    <script src="//cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+    <script>
+        var algoliaClient = algoliasearch('0E46FZ0JA2', '01370395a4f67d606d12d489c615c822');
+        var algoliaIndex = algoliaClient.initIndex('sculove.github.io');
+    </script>
+
+
+    </body>
+</html>
